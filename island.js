@@ -14,11 +14,11 @@ const screen    = $("#screen");
 const viewC     = $("#viewCompact");
 const viewE     = $("#viewExpand");
 const noteEl    = $("#stageNote");
-const stateEl   = $("#stateLabel");
-const lockTime  = $("#lockTime");
 const statusTime= $("#statusTime");
-const lockDate  = $("#lockDate");
 const banners   = $("#banners");
+const lockTime  = $("#lockTime") || null;
+const lockDate  = $("#lockDate") || null;
+const stateEl   = $("#stateLabel") || null;
 
 const APP_COLORS = {
   music : ["#fc3c44", "#a5132a"],
@@ -70,8 +70,8 @@ function fmt(s){ s = Math.max(0, Math.round(s)); const m = Math.floor(s/60), r =
 
 let toastDone = null;
 
-function setNote(msg){ noteEl.textContent = msg; noteEl.classList.add("hot"); clearTimeout(toastDone); toastDone = setTimeout(()=>noteEl.classList.remove("hot"), 2600); }
-function setState(msg){ stateEl.textContent = msg; }
+function setNote(msg){ if(!noteEl) return; noteEl.textContent = msg; noteEl.classList.add("hot"); clearTimeout(toastDone); toastDone = setTimeout(()=>noteEl.classList.remove("hot"), 2600); }
+function setState(msg){ if(stateEl) stateEl.textContent = msg; }
 
 function artData(name){
   const theme = currentTheme();
@@ -403,7 +403,7 @@ const TRACKS = [
 function setActive(src){
   state.activeId = Math.max(state.activeId, src);
   document.querySelectorAll(".sim[data-trigger]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.trigger === src)));
-  stateEl.textContent = activityLabel();
+  setState(activityLabel());
 }
 
 /* ---------------- MUSIC ---------------- */
@@ -795,7 +795,7 @@ document.querySelectorAll(".theme").forEach(t => {
 });
 
 const resetBtn = document.querySelector("[data-reset]");
-resetBtn.addEventListener("click", () => {
+if (resetBtn) resetBtn.addEventListener("click", () => {
   /* kill everything */
   ring.stop(); clearTimeout(state.autoDeclineT);
   clearInterval(state.rideTimer); state.rideTimer = null;
@@ -805,12 +805,9 @@ resetBtn.addEventListener("click", () => {
   island.setAttribute("aria-expanded","false");
   renderCompact(); renderExpand();
   document.querySelectorAll(".sim[data-trigger]").forEach(b => b.setAttribute("aria-pressed","false"));
+  const defChip = document.querySelector('.sim-timer-chips button[data-sec="60"]');
   $$(".sim-timer-chips button").forEach(x => x.classList.remove("on"));
-  document.querySelector('.sim-timer-chips button[data-sec="60"]').classList.add("on");
-  applyTheme("aurora");
-  sw("mic", false);  document.querySelector('.sw[data-switch="mic"]').setAttribute("aria-checked","false");
-  sw("cam", false);  document.querySelector('.sw[data-switch="cam"]').setAttribute("aria-checked","false");
-  sw("wifi", true);  document.querySelector('.sw[data-switch="wifi"]').setAttribute("aria-checked","true");
+  if (defChip) defChip.classList.add("on");
   banners.innerHTML = "";
   setState("Island idle"); setNote("All clear — island reset");
 });
@@ -825,12 +822,16 @@ document.addEventListener("pointerdown", (e) => {
 
 /* ---------- clock ---------- */
 function tickClock(){
+  if (!statusTime) return;
   const d = new Date();
   const t = d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: false }).replace("24:", "0:");
-  lockTime.textContent = t; statusTime.textContent = t;
-  const day = d.toLocaleDateString("en-US", { weekday: "long" });
-  const month = d.toLocaleDateString("en-US", { month: "long", day: "numeric" });
-  lockDate.textContent = day + ", " + month;
+  statusTime.textContent = t;
+  if (lockTime) lockTime.textContent = t;
+  if (lockDate){
+    const day = d.toLocaleDateString("en-US", { weekday: "long" });
+    const month = d.toLocaleDateString("en-US", { month: "long", day: "numeric" });
+    lockDate.textContent = day + ", " + month;
+  }
 }
 setInterval(tickClock, 10000); tickClock();
 
@@ -843,7 +844,7 @@ function boot(){
   if (booted) return; booted = true;
   setTimeout(()=>{
     if (interacted) chime();          // only if audio was already unlocked
-    setNote("👋 Tap a Live Activity to start");
+    setNote("Tap an icon — watch the pill");
   }, 1200);
 }
 
