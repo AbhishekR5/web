@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>Dynamic Island — Web Playground</title>
+<meta name="description" content="An iPhone-style Dynamic Island recreated in pure HTML, CSS and vanilla JavaScript.">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- Decorative backdrop -->
+<div class="bg" aria-hidden="true">
+  <i class="blob b1"></i><i class="blob b2"></i><i class="blob b3"></i>
+</div>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="brand-dot" aria-hidden="true"></span>
+    Dynamic&nbsp;Island <span class="brand-sub">/ web playground</span>
+  </div>
+  <div class="topbar-meta">
+    <span class="chip">No libraries</span>
+    <span class="chip">CSS morphing</span>
+    <a class="chip chip-link" href="#dock">Try it ↓</a>
+  </div>
+</header>
+
+<main class="layout">
+
+  <!-- ================= PHONE MOCK ================= -->
+  <section class="phone-zone" aria-label="iPhone mock-up">
+    <div class="phone-scale" id="phoneScale">
+      <div class="phone">
+        <span class="btn-side btn-side--a" aria-hidden="true"></span>
+        <span class="btn-side btn-side--b" aria-hidden="true"></span>
+        <span class="btn-side btn-side--c" aria-hidden="true"></span>
+
+        <div class="screen" id="screen">
+          <div class="wallpaper" id="wallpaper" aria-hidden="true">
+            <div class="lock-clock">
+              <div class="lock-time" id="lockTime">9:41</div>
+              <div class="lock-date" id="lockDate">Monday, September 8</div>
+            </div>
+          </div>
+
+          <!-- status: time -->
+          <div class="status-time" id="statusTime" aria-hidden="true">9:41</div>
+
+          <!-- status: right icons -->
+          <div class="status-right" aria-hidden="true">
+            <svg class="sig" viewBox="0 0 18 12" width="16" height="11">
+              <rect x="0"  y="7.4" width="3" height="4.6" rx="1"/>
+              <rect x="5"  y="4.9" width="3" height="7.1" rx="1"/>
+              <rect x="10" y="2.4" width="3" height="9.6" rx="1"/>
+              <rect x="15" y="0"  width="3" height="12" rx="1"/>
+            </svg>
+            <svg class="wifi" id="wifiIco" viewBox="0 0 18 13" width="17" height="12">
+              <g class="wifi-arcs">
+                <path d="M1.6 4.9c4.1-3.9 10.7-3.9 14.8 0"/>
+                <path d="M4.6 8c2.5-2.3 6.3-2.3 8.8 0"/>
+                <circle cx="9" cy="11" r="1.5"/>
+              </g>
+              <path class="wifi-slash" d="M1.5 12.2 16.5 1"/>
+            </svg>
+            <span class="battery" title="Battery">
+              <span class="battery-body"><span class="battery-fill"></span></span>
+              <span class="battery-cap"></span>
+            </span>
+          </div>
+
+          <!-- privacy indicators -->
+          <div class="indicators" id="indicators" aria-hidden="true">
+            <span class="indicator" id="indMic" hidden>
+              <i class="ind-dot ind-dot--mic"></i>
+              <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="9" y="3" width="6" height="10" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0"/><path d="M12 18v3"/></svg>
+            </span>
+            <span class="indicator" id="indCam" hidden>
+              <i class="ind-dot ind-dot--cam"></i>
+              <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2.5" y="6.5" width="12.5" height="11" rx="2.6"/><path d="m15 11 4.4-2.6a.9.9 0 0 1 1.4.8v5.6a.9.9 0 0 1-1.4.8L15 13"/><circle cx="8.6" cy="12" r="2.4"/></svg>
+            </span>
+          </div>
+
+          <!-- THE DYNAMIC ISLAND -->
+          <div class="island" id="island" role="button" tabindex="0" aria-expanded="false" aria-label="Dynamic Island">
+            <div class="view view--compact" id="viewCompact"></div>
+            <div class="view view--expand" id="viewExpand"></div>
+          </div>
+
+          <!-- notification banners -->
+          <div class="banners" id="banners" aria-live="polite"></div>
+
+          <!-- home-screen app dock (decorative) -->
+          <div class="apps" aria-hidden="true">
+            <span class="app" style="--a1:#30d158;--a2:#1a9e44">
+              <svg viewBox="0 0 24 24" width="21" height="21" fill="currentColor"><path d="M6.6 10.8c1.4 3.8 4.8 7.1 8.6 8.5l2-2c.3-.3.8-.4 1.2-.2l2.3.9c.9.4 1.2 1.4.7 2.2-.6 1.1-1.8 1.8-3.1 1.7C12.3 21.5 2.5 11.7 2 4.7c-.1-1.3.6-2.5 1.7-3.1.8-.5 1.8-.2 2.2.7l.9 2.3c.2.4.1.9-.2 1.2l-2 2z"/></svg>
+            </span>
+            <span class="app" style="--a1:#5e5ce6;--a2:#3634a3">
+              <svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.4 8.4 0 0 1 9-8.4h.5a8.4 8.4 0 0 1 7.5 7.5v.9z"/></svg>
+            </span>
+            <span class="app" style="--a1:#ff375f;--a2:#a30f31">
+              <svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V6l11-2.5V15"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="15" r="3"/></svg>
+            </span>
+            <span class="app" style="--a1:#32ade6;--a2:#0e5a8a">
+              <svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="3.4"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2"/></svg>
+            </span>
+          </div>
+
+          <div class="home-bar" aria-hidden="true"></div>
+        </div><!-- /screen -->
+      </div><!-- /phone -->
+    </div>
+    <p class="stage-note" id="stageNote">Island idle — trigger something in the simulator →</p>
+  </section>
+
+  <!-- ================= SIMULATOR DOCK ================= -->
+  <aside class="dock" id="dock">
+    <div class="dock-head">
+      <h1>Simulator</h1>
+      <span class="state-label" id="stateLabel">Island idle</span>
+    </div>
+
+    <h2 class="group-title">Live activities <small>render inside the island</small></h2>
+
+    <div class="grid grid--2">
+      <button class="sim" data-trigger="music" aria-pressed="false">
+        <span class="sim-ico sim-ico--music" aria-hidden="true">🎵</span>
+        <span class="sim-txt"><b>Music</b><small>Play / stop demo track</small></span>
+        <span class="sim-live" aria-hidden="true"></span>
+      </button>
+
+      <button class="sim" data-trigger="call" aria-pressed="false">
+        <span class="sim-ico sim-ico--call" aria-hidden="true">📞</span>
+        <span class="sim-txt"><b>Phone call</b><small>Priya is calling…</small></span>
+        <span class="sim-live" aria-hidden="true"></span>
+      </button>
+
+      <button class="sim" data-trigger="ride" aria-pressed="false">
+        <span class="sim-ico sim-ico--ride" aria-hidden="true">🚗</span>
+        <span class="sim-txt"><b>Live activity</b><small>Ride arriving in ~2 min</small></span>
+        <span class="sim-live" aria-hidden="true"></span>
+      </button>
+
+      <div class="sim sim--timer">
+        <span class="sim-ico sim-ico--timer" aria-hidden="true">⏱️</span>
+        <span class="sim-txt"><b>Timer</b><small>start a countdown</small></span>
+        <span class="sim-timer-chips">
+          <button data-sec="15"  aria-label="15 second timer">0:15</button>
+          <button data-sec="60"  aria-label="1 minute timer"  class="on">1:00</button>
+          <button data-sec="300" aria-label="5 minute timer">5:00</button>
+        </span>
+      </div>
+    </div>
+
+    <h2 class="group-title">Notifications <small>slide under the island</small></h2>
+    <button class="sim sim--wide" data-trigger="msg">
+      <span class="sim-ico sim-ico--msg" aria-hidden="true">💬</span>
+      <span class="sim-txt"><b>Send a notification</b><small>cycles Messages · WhatsApp · Mail · Instagram</small></span>
+    </button>
+
+    <h2 class="group-title">Screen states</h2>
+    <div class="switch-row">
+      <button class="sw" data-switch="mic" role="switch" aria-checked="false">
+        <i class="sw-dot sw-dot--mic"></i><span>Mic</span><i class="sw-track" aria-hidden="true"><i></i></i>
+      </button>
+      <button class="sw" data-switch="cam" role="switch" aria-checked="false">
+        <i class="sw-dot sw-dot--cam"></i><span>Camera</span><i class="sw-track" aria-hidden="true"><i></i></i>
+      </button>
+      <button class="sw" data-switch="wifi" role="switch" aria-checked="true">
+        <i class="sw-dot sw-dot--wifi"></i><span>Wi-Fi</span><i class="sw-track" aria-hidden="true"><i></i></i>
+      </button>
+    </div>
+
+    <div class="switch-row switch-row--themes">
+      <span class="sw-label">Wallpaper</span>
+      <button class="theme on" data-theme="aurora"  aria-label="Aurora wallpaper"  style="--t1:#22d3ee;--t2:#0b5bd3;--t3:#111827"></button>
+      <button class="theme"     data-theme="sunset"  aria-label="Sunset wallpaper"  style="--t1:#ffd166;--t2:#ef476f;--t3:#3a1c71"></button>
+      <button class="theme"     data-theme="graphite" aria-label="Graphite wallpaper" style="--t1:#6b7280;--t2:#1f2937;--t3:#020617"></button>
+      <button class="reset" data-reset>Reset all</button>
+    </div>
+
+    <p class="dock-help">
+      <kbd>Esc</kbd> / click outside / <kbd>⌄</kbd> collapses &nbsp;·&nbsp; tap the pill to expand &nbsp;·&nbsp; click a sim again to pause it
+    </p>
+  </aside>
+</main>
+
+<footer class="footer">
+  Built with HTML · CSS · vanilla JS — no frameworks, no images. Morphing is pure <code>border-radius + width/height</code> transitions.
+</footer>
+
+<script src="island.js"></script>
+</body>
+</html>
