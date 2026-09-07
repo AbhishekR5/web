@@ -1,14 +1,14 @@
 /* ============================================================
-   Dynamic Island — centered hero
+   Dynamic Island — centered hero (Apple-keynote dark)
    Pure CSS morphing: width / height / border-radius transitions
    ============================================================ */
 
 :root{
-  --bg:#030509;
+  --bg:#020302;
   --line:rgba(255,255,255,.1);
-  --txt:#eef1f8;
-  --mut:#8b93a7;
-  --acc:#0a84ff;
+  --txt:#f2f6f4;
+  --mut:#8fa39a;
+  --acc:#30d158;
   --green:#30d158;
   --red:#ff453a;
   --orange:#ff9f0a;
@@ -21,40 +21,71 @@ html{scroll-behavior:smooth}
 body{
   min-height:100vh;
   background:
-    radial-gradient(110% 80% at 50% -8%, #0a1633 0%, transparent 55%),
-    radial-gradient(90% 60% at 50% 112%, #090d18 0%, transparent 62%),
+    radial-gradient(90% 60% at 50% 0%, #06281a 0%, transparent 55%),
+    radial-gradient(70% 55% at 50% 108%, #03160e 0%, transparent 65%),
     var(--bg);
   color:var(--txt);
   font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-  overflow-x:hidden;
-  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;-webkit-font-smoothing:antialiased;
 }
-::selection{background:rgba(10,132,255,.45)}
+::selection{background:rgba(48,209,88,.35)}
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 :focus-visible{outline:2px solid var(--acc);outline-offset:2px;border-radius:10px}
 
 /* ---------- backdrop ---------- */
 .bg{position:fixed;inset:0;z-index:-2;overflow:hidden;pointer-events:none}
-.blob{position:absolute;border-radius:50%;filter:blur(100px);opacity:.3}
-.b1{width:620px;height:620px;left:-170px;top:-160px;background:radial-gradient(circle,#0e4bd0,transparent 70%);animation:drift 26s ease-in-out infinite alternate}
-.b2{width:540px;height:540px;right:-200px;top:16%;background:radial-gradient(circle,#5b21b6,transparent 70%);animation:drift 32s ease-in-out infinite alternate-reverse}
-.b3{width:640px;height:640px;left:32%;bottom:-330px;background:radial-gradient(circle,#0e7490,transparent 70%);animation:drift 40s ease-in-out infinite alternate}
+.blob{position:absolute;border-radius:50%;filter:blur(110px);opacity:.34}
+.b1{width:600px;height:600px;left:-180px;top:-140px;background:radial-gradient(circle,#0b5030,transparent 70%);animation:drift 28s ease-in-out infinite alternate}
+.b2{width:520px;height:520px;right:-200px;top:14%;background:radial-gradient(circle,#0a3d2a,transparent 70%);animation:drift 34s ease-in-out infinite alternate-reverse}
+.b3{width:640px;height:640px;left:30%;bottom:-320px;background:radial-gradient(circle,#065e34,transparent 70%);animation:drift 42s ease-in-out infinite alternate}
 @keyframes drift{to{transform:translate(60px,-40px) scale(1.12)}}
 
 /* ---------- centered hero stage ---------- */
 .stage{
-  width:100%;min-height:100vh;padding:64px 20px 40px;
+  width:100%;min-height:100vh;padding:34px 20px 44px;
   display:flex;flex-direction:column;align-items:center;justify-content:center;
 }
-.hero-outer{margin:0 0 118px;animation:riseIn 1s var(--spring) .15s both}
-.hero{
-  position:relative;width:320px;height:468px;
-  transform:scale(1.16);transform-origin:top center;
+/* composition block: eyebrow → floating island → glow floor */
+.hero-outer{
+  position:relative;width:min(540px,96vw);height:690px;margin:0 0 14px;
+  animation:riseIn 1s var(--spring) .15s both;
 }
-@keyframes riseIn{from{opacity:0;transform:translateY(28px) scale(.98)}}
+.eyebrow{
+  position:absolute;top:44px;left:0;right:0;text-align:center;
+  font-size:10.5px;font-weight:700;letter-spacing:3.2px;text-transform:uppercase;color:#7fe3a9;
+  display:flex;align-items:center;justify-content:center;gap:9px;text-indent:3.2px;
+}
+.eyebrow .live{width:7px;height:7px;border-radius:50%;background:var(--green);
+  box-shadow:0 0 12px var(--green);animation:blink 2.2s ease-in-out infinite}
+.hero{
+  position:relative;width:320px;height:690px;margin:0 auto;
+  transform:scale(1.06);transform-origin:top center;
+}
+/* glow floor (emerald) the pill floats above */
+.floor{
+  position:absolute;left:50%;top:600px;width:620px;height:96px;
+  transform:translateX(-50%);pointer-events:none;
+  background:radial-gradient(50% 55% at 50% 0%, rgba(48,209,88,.30) 0%, rgba(48,209,88,.10) 55%, transparent 78%);
+  filter:blur(3px);
+}
+.floor::before{ /* crisp arc line */
+  content:"";position:absolute;left:50%;top:14px;width:330px;height:64px;transform:translateX(-50%);
+  border-radius:50%;
+  border:1.6px solid transparent;
+  border-top-color:rgba(48,209,88,.85);
+  filter:blur(.4px) drop-shadow(0 0 12px rgba(48,209,88,.8));
+  clip-path:inset(0 0 38% 0);
+}
+.floor::after{ /* faint reflection pool below arc */
+  content:"";position:absolute;left:50%;top:46px;width:260px;height:44px;transform:translateX(-50%);
+  border-radius:50%;
+  background:radial-gradient(50% 50% at 50% 20%, rgba(48,209,88,.16), transparent 70%);
+  filter:blur(8px);
+}
+@keyframes riseIn{from{opacity:0;transform:translateY(26px) scale(.99)}}
 
 /* ============================================================
-   THE DYNAMIC ISLAND
+THE DYNAMIC ISLAND
    ============================================================ */
 .island{
   position:absolute;top:12px;left:0;right:0;margin:0 auto;z-index:40;
@@ -250,23 +281,23 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 
 
 /* ============================================================
-   HERO OVERRIDES (banners + caption live under the island)
+   /* ============================================================
+   HERO OVERRIDES — pill position + banner/caption placement
    ============================================================ */
-/* anchor the pill lower inside the hero box (engine puts it at top:12px) */
-.island{top:110px}
+.island{top:262px}
+/* faint emerald breathing rim on the resting pill */
+.island:not(.expanded){box-shadow:0 0 0 .5px rgba(255,255,255,.06),
+  0 10px 30px rgba(0,0,0,.45), inset 0 0 0 1px rgba(255,255,255,.05),
+  0 0 40px -6px rgba(48,209,88,.28)}
 .stage .banners{
   position:relative;top:auto;left:auto;transform:none;
-  width:min(300px,92vw);margin:0 auto 8px;min-height:78px;z-index:5;
+  width:min(300px,92vw);margin:4px auto 8px;min-height:66px;z-index:5;
 }
-.stage .stage-note{margin-top:0;font-size:13px}
+.stage .stage-note{margin-top:2px;font-size:12.5px}
 
-/* ---------- responsive ---------- */
 @media (max-width:560px){
-  .stage{padding-top:56px}
-  .hero{transform:scale(1);height:470px}
-  .hero-outer{margin-bottom:30px}
-  .island{top:96px}
-  .stage .banners{min-height:70px}
+  .stage{padding-top:24px}
+  .hero-outer{height:690px}
 }
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;scroll-behavior:auto}
