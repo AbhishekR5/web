@@ -1,11 +1,10 @@
 /* ============================================================
-   Dynamic Island — floating in a giant emerald-lit scene
-   (composition traced from the reference image)
+   Connect page — giant emerald-lit scene (from reference image)
+   Pure CSS morphing for the Dynamic Island
    ============================================================ */
 
 :root{
   --bg:#010301;
-  --line:rgba(255,255,255,.1);
   --txt:#eafff4;
   --mut:#6f8f7f;
   --acc:#30d158;
@@ -17,12 +16,11 @@
 }
 
 *{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
 body{
   min-height:100vh;
   background:
     radial-gradient(70% 46% at 50% -6%, #052b18 0%, transparent 62%),
-    radial-gradient(60% 40% at 50% 112%, #03150c 0%, transparent 65%),
+    radial-gradient(60% 42% at 50% 112%, #03150c 0%, transparent 65%),
     var(--bg);
   color:var(--txt);
   font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
@@ -30,85 +28,155 @@ body{
 }
 ::selection{background:rgba(48,209,88,.35)}
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
-:focus-visible{outline:2px solid var(--acc);outline-offset:2px;border-radius:14px}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--acc);outline-offset:2px;border-radius:12px}
 
 /* ---------- ambient mist ---------- */
 .bg{position:fixed;inset:0;z-index:-2;overflow:hidden;pointer-events:none}
 .mist{position:absolute;border-radius:50%;filter:blur(120px)}
-.m1{width:560px;height:560px;left:-200px;top:-160px;background:radial-gradient(circle,#0c5c34,transparent 70%);opacity:.5;animation:drift 30s ease-in-out infinite alternate}
+.m1{width:560px;height:560px;left:-200px;top:-160px;background:radial-gradient(circle,#0c5c34,transparent 70%);opacity:.55;animation:drift 30s ease-in-out infinite alternate}
 .m2{width:520px;height:520px;right:-220px;top:20%;background:radial-gradient(circle,#084a2b,transparent 70%);opacity:.5;animation:drift 38s ease-in-out infinite alternate-reverse}
 .m3{width:640px;height:640px;left:26%;bottom:-340px;background:radial-gradient(circle,#0a6b3a,transparent 70%);opacity:.5;animation:drift 46s ease-in-out infinite alternate}
 @keyframes drift{to{transform:translate(60px,-40px) scale(1.12)}}
 
 /* ---------- stage ---------- */
 .stage{
-  width:100%;min-height:100vh;padding:20px 16px 26px;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;
+  width:100%;min-height:100vh;padding:14px 12px 18px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;
 }
-.frame{position:relative;width:min(96vw,1560px);height:clamp(560px,84vh,800px);flex:none;
-  animation:riseIn 1.1s var(--spring) .1s both}
+.frame{
+  position:relative;width:min(96vw,1560px);height:clamp(600px,86vh,840px);flex:none;
+  animation:riseIn 1.1s var(--spring) .1s both;
+}
 
 /* ============================================================
-   GIANT EMERALD-RIMMED CAPSULE (traced from the reference)
+   GIANT EMERALD CAPSULE
    ============================================================ */
 .capsule{
   position:absolute;inset:0;border-radius:50%;
-  border:1.5px solid rgba(125,255,185,.3);
-  box-shadow:0 0 110px -18px rgba(48,209,88,.22),
-             inset 0 0 140px rgba(48,209,88,.06);
+  border:1.4px solid rgba(125,255,185,.28);
+  box-shadow:0 0 120px -18px rgba(48,209,88,.2), inset 0 0 150px rgba(48,209,88,.05);
 }
-/* wide halo ring (the soft green rim) */
 .capsule::before{
   content:"";position:absolute;inset:-1.5px;border-radius:inherit;
-  border:2px solid rgba(110,255,175,.4);
-  filter:blur(9px);opacity:.75;
+  border:2px solid rgba(110,255,175,.35);filter:blur(10px);opacity:.7;
 }
-/* bottom-weighted green light inside the oval */
 .capsule::after{
   content:"";position:absolute;inset:0;border-radius:inherit;
-  background:
-    radial-gradient(120% 46% at 50% 102%, rgba(48,209,88,.16) 0%, transparent 60%),
-    radial-gradient(90% 30% at 50% -4%, rgba(150,255,205,.10) 0%, transparent 60%);
-}
-/* crisp bright arc along the bottom of the rim */
-.rim-bottom{
-  position:absolute;left:50%;bottom:-1px;width:66%;height:46%;z-index:1;
-  transform:translateX(-50%);border-radius:50%;pointer-events:none;
-  border:1.5px solid rgba(140,255,195,.55);
-  clip-path:inset(0 0 60% 0);
-  filter:blur(.6px) drop-shadow(0 0 10px rgba(48,209,88,.75));
+  background:radial-gradient(120% 42% at 50% 104%, rgba(48,209,88,.14) 0%, transparent 60%),
+             radial-gradient(90% 30% at 50% -4%, rgba(150,255,205,.08) 0%, transparent 60%);
 }
 
-/* specular glints on the rim (from the reference highlights) */
+/* thin glow bars near the top & bottom inner edges */
+.edge-bar{position:absolute;left:17.6%;width:64.8%;pointer-events:none;border-radius:999px;z-index:1}
+.edge-bar--top{top:8.8%;height:9px;
+  background:linear-gradient(90deg,transparent,rgba(48,209,88,.85) 18%,rgba(48,209,88,.85) 82%,transparent);
+  box-shadow:0 0 18px rgba(48,209,88,.5)}
+.edge-bar--bottom{bottom:8.2%;height:12px;
+  background:linear-gradient(90deg,transparent,rgba(48,209,88,.9) 14%,rgba(48,209,88,.9) 86%,transparent);
+  box-shadow:0 0 26px rgba(48,209,88,.6)}
+.edge-bar::after{content:"";position:absolute;left:18%;right:18%;top:50%;transform:translateY(-50%);
+  height:3px;border-radius:999px;background:#c6ffe0;filter:blur(1px);opacity:.85}
+
+/* specular glints on the rim */
 .glint{position:absolute;z-index:3;border-radius:50%;pointer-events:none;
-  background:radial-gradient(circle,rgba(190,255,220,.9),rgba(190,255,220,0) 70%);
-  filter:blur(1px)}
-.g1{width:9px;height:9px;left:9%;top:4.5%;opacity:.85}
-.g2{width:7px;height:7px;left:90.5%;top:22%;opacity:.75}
-.g3{width:11px;height:11px;left:7.5%;bottom:19%;opacity:.6}
-.g4{width:5px;height:5px;left:90%;bottom:15%;opacity:.55}
+  background:radial-gradient(circle,rgba(190,255,220,.95),rgba(190,255,220,0) 70%);filter:blur(1px)}
+.g1{width:9px;height:9px;left:9.5%;top:5.5%;opacity:.9}
+.g2{width:7px;height:7px;left:89.6%;top:21%;opacity:.8}
+.g3{width:10px;height:10px;left:7.2%;bottom:22%;opacity:.65}
+.g4{width:5px;height:5px;left:88.4%;bottom:16%;opacity:.6}
+.g5{width:6px;height:6px;left:50.4%;top:4.2%;opacity:.7}
 
 /* ============================================================
-   SCENE (content floats inside the oval)
+   SCENE — content floats inside the capsule
    ============================================================ */
-.scene{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.scene{position:absolute;inset:0;z-index:2}
 
-/* thin caption line, like the reference */
-.caption{
-  position:absolute;top:clamp(44px,6.8vh,70px);left:0;right:0;
-  display:flex;align-items:center;justify-content:center;gap:16px;
-  font-size:12.5px;font-weight:600;letter-spacing:4.5px;text-transform:uppercase;
-  color:rgba(235,255,244,.82);text-indent:4.5px;
+/* ---- title ("Connect with us") ---- */
+.title{
+  position:absolute;left:0;right:0;top:15%;
+  text-align:center;font-size:clamp(21px,2.1vw,30px);font-weight:700;letter-spacing:.02em;
+  color:rgba(245,255,250,.96);text-shadow:0 0 30px rgba(48,209,88,.25);
 }
-.cdot{width:6px;height:6px;border-radius:50%;background:var(--green);
-  box-shadow:0 0 10px var(--green);animation:blink 2.4s ease-in-out infinite}
-.cdot:last-child{animation-delay:1.2s}
-@keyframes blink{50%{opacity:.3}}
+.title::before,.title::after{
+  content:"";display:inline-block;width:7px;height:7px;border-radius:50%;
+  background:var(--green);box-shadow:0 0 10px var(--green);
+  vertical-align:middle;margin:0 clamp(12px,1.2vw,20px);
+  animation:blink 2.4s ease-in-out infinite;
+}
+.title::after{animation-delay:1.2s}
 
-/* the interactive pill: absolutely centered so it never shifts layout */
-.scene .island{position:absolute;top:clamp(104px,15.5vh,150px);left:50%;transform:translateX(-50%)}
+/* ---- interactive island (hero) ---- */
+.scene .island{
+  position:absolute;left:50%;right:auto;margin:0;transform:translateX(-50%);
+  top:21.5%;z-index:8;
+}
+.scene .island.expanded{
+  z-index:9;
+  box-shadow:0 0 0 .5px rgba(255,255,255,.07),0 40px 90px -14px rgba(0,0,0,.85),
+             0 0 80px -12px rgba(48,209,88,.35),inset 0 0 0 1px rgba(255,255,255,.06);
+}
 
-/* ============================================================
+/* ---- social tiles (icon above label) ---- */
+.tiles{
+  position:absolute;left:0;right:0;top:36.5%;
+  display:flex;align-items:flex-start;justify-content:center;gap:clamp(30px,6.4vw,104px);
+}
+.tile{display:flex;flex-direction:column;align-items:center;gap:10px;padding:4px 2px;border-radius:18px;transition:transform .2s}
+.tile:active{transform:scale(.92)}
+.t-ico{
+  width:clamp(54px,5.4vh,64px);height:clamp(54px,5.4vh,64px);border-radius:clamp(15px,1.6vh,19px);
+  display:grid;place-items:center;color:#eafff4;
+  background:linear-gradient(165deg,rgba(255,255,255,.075),rgba(255,255,255,.02));
+  border:1px solid rgba(150,255,200,.15);
+  box-shadow:0 12px 28px -12px rgba(0,0,0,.85),inset 0 1px 0 rgba(255,255,255,.09);
+  transition:border-color .25s,box-shadow .3s,color .25s;
+}
+.t-txt{font-size:clamp(11px,1vw,14px);font-weight:600;letter-spacing:.12em;
+  text-transform:uppercase;color:rgba(230,255,242,.66);text-indent:.12em}
+.tile:hover .t-ico{border-color:rgba(48,209,88,.55);color:#ccffe2;box-shadow:0 0 24px -6px rgba(48,209,88,.5)}
+.tile[aria-pressed="true"] .t-ico{
+  border-color:rgba(48,209,88,.9);color:#b6ffd6;
+  box-shadow:0 0 0 1px rgba(48,209,88,.2),0 0 34px -4px rgba(48,209,88,.85);
+}
+.tile[aria-pressed="true"] .t-txt{color:#8fffc0}
+
+/* ---- action buttons ---- */
+.actions{
+  position:absolute;left:0;right:0;top:65%;
+  display:flex;justify-content:center;gap:clamp(16px,3vw,44px);
+}
+.pill-btn{
+  text-decoration:none;font-size:clamp(13px,1.15vw,17px);font-weight:600;letter-spacing:.03em;
+  color:#eafff4;padding:clamp(9px,1.1vh,13px) clamp(22px,2.6vw,40px);border-radius:999px;
+  background:linear-gradient(165deg,rgba(255,255,255,.08),rgba(255,255,255,.03));
+  border:1px solid rgba(150,255,200,.22);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 10px 24px -12px rgba(0,0,0,.8);
+  transition:border-color .25s,box-shadow .3s,transform .18s;
+}
+.pill-btn:hover{border-color:rgba(48,209,88,.75);box-shadow:0 0 26px -6px rgba(48,209,88,.6)}
+.pill-btn:active{transform:scale(.97)}
+
+/* banners drop right under the island, overlaying like iOS */
+.scene .banners{
+  position:absolute;left:50%;transform:translateX(-50%);top:calc(21.5% + 46px);
+  width:min(300px,82vw);z-index:7;
+}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(26px) scale(.99)}}
+
+/* ---------- responsive ---------- */
+@media (max-width:680px){
+  .tiles{gap:5.4vw}
+  .scene .island{top:24%}
+  .scene .banners{top:calc(24% + 46px)}
+  .actions{top:63%}
+  .title{top:17%}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important}
+}
+
 THE DYNAMIC ISLAND
    ============================================================ */
 .island{
@@ -347,15 +415,3 @@ THE DYNAMIC ISLAND
 
 @keyframes riseIn{from{opacity:0;transform:translateY(26px) scale(.99)}}
 
-/* ---------- responsive ---------- */
-@media (max-width:640px){
-  .stage{gap:12px;padding-top:34px}
-  .caption{font-size:10px;letter-spacing:2.5px;gap:10px}
-  .scene .banners{bottom:84px}
-}
-@media (max-height:700px){
-  .frame{height:min(88vh,680px)}
-}
-@media (prefers-reduced-motion:reduce){
-  *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;scroll-behavior:auto}
-}

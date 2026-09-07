@@ -695,15 +695,17 @@ function startRide(){
    Notifications
    ============================================================ */
 const MSG_POOL = [
-  { app: "Messages", icon: "💬", color: APP_COLORS.msg,  title: "Messages", text: "Mom: Dinner's ready, coming?" },
-  { app: "WhatsApp", icon: "🟢", color: APP_COLORS.whats, title: "WhatsApp", text: "Design team: New island concept looks sick 🔥" },
-  { app: "Mail",     icon: "✉️", color: APP_COLORS.mail,  title: "Mail",     text: "Apple Music: Your receipt from today's purchase" },
-  { app: "Instagram",icon: "📷", color: APP_COLORS.insta, title: "Instagram",text: "arjun.k likes your photo" },
+  { app: "Instagram", icon: "📷", color: APP_COLORS.insta, title: "Instagram", text: "arjun.k just followed you on Instagram" },
+  { app: "Facebook",  icon: "👍", color: ["#1877f2", "#0a4fc0"], title: "Facebook", text: "Sara liked your photo on Facebook" },
+  { app: "WhatsApp",  icon: "🟢", color: APP_COLORS.whats, title: "WhatsApp", text: "New voice message from your contact" },
+  { app: "LinkedIn",  icon: "💼", color: ["#0a66c2", "#004182"], title: "LinkedIn", text: "Your profile appeared in 3 searches" },
+  { app: "Messages",  icon: "💬", color: APP_COLORS.msg,  title: "Messages", text: "Mom: Dinner's ready, coming?" },
+  { app: "Mail",      icon: "✉️", color: APP_COLORS.mail, title: "Mail",     text: "Welcome to the island — say hi!" },
 ];
 let msgIdx = 0;
 
-function sendNotification(){
-  const item = MSG_POOL[msgIdx++ % MSG_POOL.length];
+function sendNotification(pick){
+  const item = pick || MSG_POOL[msgIdx++ % MSG_POOL.length];
   const card = document.createElement("div");
   card.className = "banner";
   card.innerHTML = `
@@ -773,6 +775,17 @@ document.querySelectorAll(".sim[data-trigger]").forEach(btn => {
     }
     else if (t === "ride")        startRide();
     else if (t === "msg")         sendNotification();
+  });
+});
+
+/* social tiles: brand notification on each tap */
+document.querySelectorAll(".tile[data-app]").forEach(t => {
+  t.addEventListener("click", () => {
+    stopDemo();
+    document.querySelectorAll(".tile").forEach(x => x.setAttribute("aria-pressed", String(x === t)));
+    const item = MSG_POOL.find(m => m.title === t.dataset.app);
+    if (item) sendNotification(item);
+    setNote(t.dataset.app + " — see you there ✨");
   });
 });
 

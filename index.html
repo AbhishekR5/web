@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="dark">
-<title>Dynamic Island — Now on the Web</title>
-<meta name="description" content="An iPhone-style Dynamic Island in pure HTML, CSS and vanilla JavaScript — floating in a giant emerald-lit scene.">
+<title>Connect with us — Dynamic Island</title>
+<meta name="description" content="Connect with us — an interactive Dynamic Island in a giant emerald-lit scene. HTML · CSS · vanilla JS.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 32'%3E%3Crect width='64' height='32' rx='16' fill='%23000'/%3E%3Ccircle cx='32' cy='16' r='6' fill='%2330d158'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="styles.css">
 </head>
@@ -21,44 +21,62 @@
 
     <!-- ======== giant emerald-rimmed capsule ======== -->
     <div class="capsule" aria-hidden="true"></div>
-    <i class="rim-bottom" aria-hidden="true"></i>
 
-    <!-- glints on the rim -->
+    <!-- thin glow bars near top & bottom edges (from the reference) -->
+    <i class="edge-bar edge-bar--top" aria-hidden="true"></i>
+    <i class="edge-bar edge-bar--bottom" aria-hidden="true"></i>
+
+    <!-- specular glints on the rim -->
     <i class="glint g1" aria-hidden="true"></i>
     <i class="glint g2" aria-hidden="true"></i>
     <i class="glint g3" aria-hidden="true"></i>
     <i class="glint g4" aria-hidden="true"></i>
+    <i class="glint g5" aria-hidden="true"></i>
 
-    <!-- ======== scene inside the capsule ======== -->
+    <!-- ======== scene ======== -->
     <div class="scene">
 
-      <!-- caption line (mirrors the one in the reference) -->
-      <p class="caption"><i class="cdot" aria-hidden="true"></i>The Dynamic Island, on the web<i class="cdot" aria-hidden="true"></i></p>
+      <!-- title line, verbatim from the reference -->
+      <p class="title">Connect with&nbsp;us</p>
 
-      <!-- THE DYNAMIC ISLAND (interactive core) -->
+      <!-- THE DYNAMIC ISLAND (interactive hero) -->
       <div class="island" id="island" role="button" tabindex="0" aria-expanded="false" aria-label="Dynamic Island">
         <div class="view view--compact" id="viewCompact"></div>
         <div class="view view--expand" id="viewExpand"></div>
       </div>
 
-      <!-- live activity tiles (like the app tiles in the reference) -->
+      <!-- social tiles (icon above label, like the reference) -->
       <div class="tiles">
-        <button class="sim" data-trigger="music" aria-pressed="false">
-          <span class="sim-ico" aria-hidden="true">&#9654;&#65038;</span>
-          <span class="sim-txt">Music</span>
+        <button class="tile" data-app="Instagram" aria-pressed="false">
+          <span class="t-ico">
+            <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5.2"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1.2" fill="currentColor" stroke="none"/></svg>
+          </span>
+          <span class="t-txt">Instagram</span>
         </button>
-        <button class="sim" data-trigger="call" aria-pressed="false">
-          <span class="sim-ico" aria-hidden="true">&#9742;&#65038;</span>
-          <span class="sim-txt">Call</span>
+        <button class="tile" data-app="Facebook" aria-pressed="false">
+          <span class="t-ico">
+            <svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor"><path d="M13.4 21v-7.1h2.4l.36-2.8H13.4V9.4c0-.81.22-1.36 1.38-1.36h1.48V5.55c-.26-.03-1.13-.11-2.15-.11-2.13 0-3.59 1.3-3.59 3.69v2.06H8.5v2.8h2.02V21h2.88z"/></svg>
+          </span>
+          <span class="t-txt">Facebook</span>
         </button>
-        <button class="sim" data-trigger="ride" aria-pressed="false">
-          <span class="sim-ico" aria-hidden="true">&#9201;&#65038;</span>
-          <span class="sim-txt">Ride</span>
+        <button class="tile" data-app="WhatsApp" aria-pressed="false">
+          <span class="t-ico">
+            <svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor"><path d="M12 2.6A9.3 9.3 0 0 0 3.1 16L2 21.7l5.8-1.1A9.3 9.3 0 1 0 12 2.6zm0 17a7.6 7.6 0 0 1-3.9-1.06l-.28-.17-3.43.65.68-3.34-.18-.29A7.65 7.65 0 1 1 12 19.6zm4.2-5.7c-.23-.12-1.36-.67-1.57-.75-.21-.08-.37-.12-.52.12-.15.24-.6.75-.73.9-.13.15-.27.17-.5.06-.23-.12-.97-.36-1.85-1.14a6.9 6.9 0 0 1-1.28-1.6c-.13-.23-.01-.36.1-.48.1-.1.23-.27.34-.4.11-.14.15-.23.23-.39.07-.15.04-.29-.02-.4-.06-.12-.52-1.26-.71-1.72-.19-.46-.38-.4-.52-.4h-.45c-.15 0-.4.06-.62.29-.21.23-.81.79-.81 1.93s.83 2.24.95 2.4c.12.15 1.64 2.5 3.97 3.51.55.24.99.38 1.33.48.56.18 1.07.16 1.47.1.45-.07 1.36-.56 1.55-1.1.19-.54.19-1 .13-1.1-.06-.1-.22-.16-.45-.28z"/></svg>
+          </span>
+          <span class="t-txt">WhatsApp</span>
         </button>
-        <button class="sim" data-trigger="msg" aria-pressed="false">
-          <span class="sim-ico" aria-hidden="true">&#9993;&#65038;</span>
-          <span class="sim-txt">Notify</span>
+        <button class="tile" data-app="LinkedIn" aria-pressed="false">
+          <span class="t-ico">
+            <svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor"><path d="M6.94 8.9H3.9V20.3h3.04V8.9zM5.42 3.7a1.77 1.77 0 1 0 0 3.54 1.77 1.77 0 0 0 0-3.54zM20.1 13.7c0-3.06-1.63-4.48-3.8-4.48-1.76 0-2.55.97-2.98 1.65V8.9H10.3c.04.88 0 11.4 0 11.4h3.03v-6.37c0-.34.02-.68.12-.92.27-.68.89-1.38 1.93-1.38 1.36 0 1.9 1.04 1.9 2.56v6.11h3.03l-.01-6.6z"/></svg>
+          </span>
+          <span class="t-txt">LinkedIn</span>
         </button>
+      </div>
+
+      <!-- action buttons, verbatim from the reference -->
+      <div class="actions">
+        <a class="pill-btn" href="https://abhishekr5.github.io/web/" target="_blank" rel="noopener">Visit Website</a>
+        <a class="pill-btn" href="mailto:hello@abhishekr5.dev">Send Email</a>
       </div>
 
       <!-- notification banners -->
@@ -67,7 +85,7 @@
     </div><!-- /scene -->
   </div><!-- /frame -->
 
-  <p class="stage-note" id="stageNote">tap the pill · or watch it play</p>
+  <p class="stage-note" id="stageNote">the island is live — tap it, or tap a handle below</p>
 
 </main>
 
