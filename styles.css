@@ -1,11 +1,10 @@
 /* ============================================================
-   Dynamic Island — minimal
+   Dynamic Island — centered hero
    Pure CSS morphing: width / height / border-radius transitions
    ============================================================ */
 
 :root{
-  --bg:#04060b;
-  --panel:rgba(255,255,255,.05);
+  --bg:#030509;
   --line:rgba(255,255,255,.1);
   --txt:#eef1f8;
   --mut:#8b93a7;
@@ -18,152 +17,41 @@
 }
 
 *{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
 body{
-  min-height:100vh;display:flex;align-items:center;justify-content:center;
-  background:var(--bg);color:var(--txt);
+  min-height:100vh;
+  background:
+    radial-gradient(110% 80% at 50% -8%, #0a1633 0%, transparent 55%),
+    radial-gradient(90% 60% at 50% 112%, #090d18 0%, transparent 62%),
+    var(--bg);
+  color:var(--txt);
   font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-  overflow-x:hidden;-webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
 }
 ::selection{background:rgba(10,132,255,.45)}
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 :focus-visible{outline:2px solid var(--acc);outline-offset:2px;border-radius:10px}
 
 /* ---------- backdrop ---------- */
-.bg{position:fixed;inset:0;z-index:-1;pointer-events:none;
-  background:
-    radial-gradient(90% 70% at 50% 12%, #0d1b3a 0%, transparent 58%),
-    radial-gradient(80% 60% at 50% 105%, #0b0f1c 0%, transparent 60%),
-    var(--bg);
-}
+.bg{position:fixed;inset:0;z-index:-2;overflow:hidden;pointer-events:none}
+.blob{position:absolute;border-radius:50%;filter:blur(100px);opacity:.3}
+.b1{width:620px;height:620px;left:-170px;top:-160px;background:radial-gradient(circle,#0e4bd0,transparent 70%);animation:drift 26s ease-in-out infinite alternate}
+.b2{width:540px;height:540px;right:-200px;top:16%;background:radial-gradient(circle,#5b21b6,transparent 70%);animation:drift 32s ease-in-out infinite alternate-reverse}
+.b3{width:640px;height:640px;left:32%;bottom:-330px;background:radial-gradient(circle,#0e7490,transparent 70%);animation:drift 40s ease-in-out infinite alternate}
+@keyframes drift{to{transform:translate(60px,-40px) scale(1.12)}}
 
-/* ---------- stage ---------- */
+/* ---------- centered hero stage ---------- */
 .stage{
-  width:100%;min-height:100vh;padding:56px 20px 40px;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:30px;
+  width:100%;min-height:100vh;padding:64px 20px 40px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
 }
-.phone-zone{display:flex;flex-direction:column;align-items:center}
-
-/* ============================================================
-   MINIMAL CONTROL BAR
-   ============================================================ */
-.ctrl{
-  display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center;
-  background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.03));
-  border:1px solid var(--line);border-radius:999px;padding:8px 12px;
-  backdrop-filter:blur(16px);
-  box-shadow:0 24px 60px -24px rgba(0,0,0,.8), inset 0 1px 0 rgba(255,255,255,.06);
-  animation:riseIn .9s var(--spring) .2s both;
+.hero-outer{margin:0 0 118px;animation:riseIn 1s var(--spring) .15s both}
+.hero{
+  position:relative;width:320px;height:468px;
+  transform:scale(1.16);transform-origin:top center;
 }
-.sim{
-  position:relative;width:46px;height:46px;border-radius:50%;display:grid;place-items:center;
-  background:var(--panel);border:1px solid transparent;
-  transition:background .2s,transform .18s,border-color .25s,box-shadow .3s;
-}
-.sim:hover{background:rgba(255,255,255,.12);transform:translateY(-2px)}
-.sim:active{transform:scale(.92)}
-.sim-ico{font-size:19px;filter:saturate(.9)}
-.sim-live{position:absolute;top:2px;right:2px;width:7px;height:7px;border-radius:50%;
-  background:#39404f;transition:background .3s,box-shadow .3s}
-.sim[aria-pressed="true"]{border-color:rgba(48,209,88,.55);background:rgba(48,209,88,.1)}
-.sim[aria-pressed="true"] .sim-live{background:var(--green);animation:liveDot 1.6s ease-in-out infinite}
-@keyframes liveDot{50%{box-shadow:0 0 0 6px rgba(48,209,88,0)}}
-.divider{width:1px;height:26px;background:rgba(255,255,255,.14);margin:0 4px}
-.sim-timer-chips{display:flex;gap:5px;align-items:center}
-.sim-timer-chips button{font-size:11.5px;font-weight:700;color:#c9d1e0;background:rgba(255,255,255,.06);
-  border:1px solid var(--line);padding:8px 13px;border-radius:999px;
-  transition:all .2s;font-variant-numeric:tabular-nums}
-.sim-timer-chips button:hover{background:rgba(255,255,255,.14)}
-.sim-timer-chips button.on{color:#0d1117;background:var(--orange);border-color:transparent;
-  box-shadow:0 6px 18px -4px rgba(255,159,10,.75)}
-
-/* ---------- hint under controls ---------- */
-.stage-note{font-size:12px;color:var(--mut);text-align:center;min-height:18px;margin-top:-14px;transition:color .3s}
-.stage-note.hot{color:#9bc6ff}
-
-@keyframes riseIn{from{opacity:0;transform:translateY(24px) scale(.985)}}
-
-/* ---------- responsive ---------- */
-@media (max-width:420px){
-  .stage{padding-top:30px}
-  .ctrl{gap:6px;padding:8px 10px}
-}
-@media (prefers-reduced-motion:reduce){
-  *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important}
-}
-/* ---------- phone ---------- */
-.phone-scale{width:336px;height:728px;will-change:transform;animation:riseIn .9s var(--spring) .05s both}
-@keyframes riseIn{from{opacity:0;transform:translateY(26px) scale(.985)}}
-.phone{
-  position:relative;width:336px;height:728px;
-  background:linear-gradient(150deg,#3d4350 0%,#14161c 30%,#0a0b10 55%,#1c1f27 100%);
-  border-radius:62px;padding:11px;
-  box-shadow:0 0 0 1px rgba(255,255,255,.05),
-             0 45px 110px -24px rgba(0,0,0,.85),
-             inset 0 1px 1px rgba(255,255,255,.22);
-}
-.screen{
-  position:relative;width:314px;height:706px;border-radius:52px;overflow:hidden;
-  background:#0b0f1a;
-}
-.screen::after{content:"";position:absolute;inset:0;border-radius:52px;z-index:60;pointer-events:none;
-  box-shadow:inset 0 0 3px rgba(255,255,255,.05), inset 0 0 60px rgba(0,0,0,.25);}
-
-/* side buttons */
-.btn-side{position:absolute;background:#23262e;z-index:3}
-.btn-side--a{width:3px;height:26px;left:-3px;top:130px;border-radius:3px 0 0 3px}
-.btn-side--b{width:3px;height:52px;left:-3px;top:180px;border-radius:3px 0 0 3px}
-.btn-side--c{width:3px;height:88px;right:-3px;top:230px;border-radius:0 3px 3px 0}
-
-/* wallpaper */
-.wallpaper{position:absolute;inset:0;z-index:0;
-  background:
-    radial-gradient(120% 90% at 12% 6%,#1d4ed8 0%,transparent 55%),
-    radial-gradient(130% 100% at 90% 0%,#6d28d9 0%,transparent 55%),
-    radial-gradient(150% 120% at 50% 115%,#0ea5e9 0%,transparent 62%),
-    linear-gradient(180deg,#10182f,#02040a 80%);
-  transition:background .6s ease;
-}
-.lock-clock{position:absolute;left:0;right:0;top:150px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:6px}
-.lock-time{font-size:88px;font-weight:200;letter-spacing:-3px;color:#fff;text-shadow:0 6px 40px rgba(0,0,0,.35);line-height:1}
-.lock-date{font-size:15px;font-weight:600;letter-spacing:1.5px;color:rgba(255,255,255,.82);text-transform:uppercase;text-shadow:0 2px 18px rgba(0,0,0,.3)}
-
-/* ---------- status bar ---------- */
-.status-time,.status-right{
-  position:absolute;top:21px;z-index:30;pointer-events:none;
-  color:rgba(255,255,255,.94);transition:opacity .4s ease;
-}
-.status-time{left:22px;font-size:15px;font-weight:600;font-variant-numeric:tabular-nums}
-.status-right{right:20px;display:flex;align-items:center;gap:7px}
-.sig rect{fill:currentColor}
-.wifi{color:currentColor}
-.wifi-arcs path{fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
-.wifi-slash{fill:none;stroke:var(--red);stroke-width:2;stroke-linecap:round;opacity:0;transition:opacity .3s}
-.wifi.off .wifi-arcs{opacity:.35}
-.wifi.off .wifi-slash{opacity:1}
-.battery{display:flex;align-items:center;gap:2px}
-.battery-body{width:24px;height:12px;border:1.5px solid rgba(255,255,255,.5);border-radius:4px;padding:1.5px}
-.battery-fill{display:block;width:84%;height:100%;border-radius:1.5px;background:var(--green)}
-.battery-cap{width:1.6px;height:5px;background:rgba(255,255,255,.5);border-radius:0 1px 1px 0}
-.screen.is-expanded .status-time,
-.screen.is-expanded .status-right{opacity:0}
-
-/* ---------- privacy indicators ---------- */
-.indicators{position:absolute;top:17px;left:0;right:0;z-index:25;pointer-events:none}
-.indicator{
-  position:absolute;top:0;display:inline-flex;align-items:center;gap:5px;
-  height:26px;padding:0 8px;border-radius:999px;
-  background:rgba(15,17,22,.92);color:#fff;
-  box-shadow:inset 0 0 0 1px rgba(255,255,255,.08),0 2px 10px rgba(0,0,0,.35);
-  transition:opacity .35s ease,transform .35s ease;
-}
-.indicator[hidden]{display:none}
-#indMic{right:calc(50% + 100px)}
-#indCam{left:calc(50% + 100px)}
-.ind-dot{width:8px;height:8px;border-radius:50%;animation:blink 2.4s ease-in-out infinite}
-.ind-dot--mic{background:#ff9f0a;box-shadow:0 0 8px #ff9f0a}
-.ind-dot--cam{background:#30d158;box-shadow:0 0 8px #30d158}
-@keyframes blink{50%{opacity:.35}}
-.screen.is-expanded .indicator{opacity:0}
+@keyframes riseIn{from{opacity:0;transform:translateY(28px) scale(.98)}}
 
 /* ============================================================
    THE DYNAMIC ISLAND
@@ -360,20 +248,26 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .banner-top time{font-size:11px;color:#7b8089;flex:none}
 .banner-body p{font-size:13px;color:#3a3f47;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
 
-/* ---------- app dock (decorative) ---------- */
-.apps{position:absolute;left:50%;transform:translateX(-50%);bottom:34px;z-index:5;display:flex;gap:16px;
-  padding:12px 18px;border-radius:30px;background:rgba(255,255,255,.13);backdrop-filter:blur(22px) saturate(1.5);
-  box-shadow:inset 0 0 0 .5px rgba(255,255,255,.18)}
-.app{width:47px;height:47px;border-radius:14px;display:grid;place-items:center;color:#fff;
-  background:linear-gradient(160deg,var(--a1),var(--a2));
-  box-shadow:inset 0 0 0 .5px rgba(255,255,255,.2),0 6px 16px -4px rgba(0,0,0,.5)}
-.home-bar{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);z-index:5;
-  width:132px;height:5px;border-radius:3px;background:rgba(255,255,255,.85)}
-
-/* ---------- stage note ---------- */
-.stage-note{font-size:13.5px;color:var(--mut);text-align:center;min-height:20px;
-  transition:color .3s;animation:floaty 4s ease-in-out infinite}
-.stage-note.hot{color:#9bc6ff}
-@keyframes floaty{50%{transform:translateY(3px)}}
 
 /* ============================================================
+   HERO OVERRIDES (banners + caption live under the island)
+   ============================================================ */
+/* anchor the pill lower inside the hero box (engine puts it at top:12px) */
+.island{top:110px}
+.stage .banners{
+  position:relative;top:auto;left:auto;transform:none;
+  width:min(300px,92vw);margin:0 auto 8px;min-height:78px;z-index:5;
+}
+.stage .stage-note{margin-top:0;font-size:13px}
+
+/* ---------- responsive ---------- */
+@media (max-width:560px){
+  .stage{padding-top:56px}
+  .hero{transform:scale(1);height:470px}
+  .hero-outer{margin-bottom:30px}
+  .island{top:96px}
+  .stage .banners{min-height:70px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;scroll-behavior:auto}
+}

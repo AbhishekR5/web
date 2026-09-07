@@ -10,7 +10,9 @@ const $  = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 
 const island    = $("#island");
-const screen    = $("#screen");
+/* screen & status bar are optional (hero mode has no phone chrome) */
+const screenEl  = $("#screen");
+const screen    = screenEl || { classList:{ add(){}, remove(){} }, addEventListener(){} };
 const viewC     = $("#viewCompact");
 const viewE     = $("#viewExpand");
 const noteEl    = $("#stageNote");
@@ -342,6 +344,7 @@ island.addEventListener("click", (e) => {
   /* plain pill tap */
   if (state.expanded){ if (state.phase !== "incoming") collapse(); }
   else if (state.kind){ expand(); }
+  else { demoTour(); }             // idle → start the showcase tour
 });
 
 viewE.addEventListener("click", (e) => {
@@ -836,29 +839,92 @@ function tickClock(){
 setInterval(tickClock, 10000); tickClock();
 
 /* ============================================================
-   Boot: intro sequence — idle pill → chime → hint
+   Boot
    ============================================================ */
 let booted = false;
 let interacted = false;
 function boot(){
   if (booted) return; booted = true;
-  setTimeout(()=>{
-    if (interacted) chime();          // only if audio was already unlocked
-    setNote("Tap an icon — watch the pill");
-  }, 1200);
+  setTimeout(()=>{ chime(); setNote("Dynamic Island · tap it, or let it play"); }, 700);
 }
 
 /* ============================================================
-   Audio on any first gesture (mobile policy)
+   Audio unlock on first gesture (mobile policy)
    ============================================================ */
 document.addEventListener("pointerdown", () => {
   interacted = true;
   try { if (actx && actx.state === "suspended") actx.resume(); } catch(e){}
 }, { once: false });
 
-/* pointerover on the phone wakes the hint once */
-screen.addEventListener("pointerenter", boot, { once: true });
+/* ============================================================
+   Hero autoplay demo (no simulator — the island plays itself)
+   ============================================================ */
+function heroReset(){
+  ring.stop(); clearTimeout(state.autoDeclineT);
+  clearInterval(state.rideTimer); state.rideTimer = null;
+  state.timerOn = false; state.timerDonePending = false; state.music.playing = false;
+  if (state.kind || state.expanded){
+    state.kind = null; state.phase = "idle"; state.expanded = false;
+    island.classList.remove("expanded","kind-music","kind-call","kind-timer","kind-ride");
+    island.setAttribute("aria-expanded","false");
+    screen.classList.remove("is-expanded");
+    startMorph();
+    setActive(null);
+  }
+  renderCompact(); renderExpand();
+}
+
+let demoRunning = false;
+function demoTour(){
+  if (demoRunning) return;
+  demoRunning = true;
+  (async () => {
+    const wait = (ms) => new Promise(r => setTimeout(r, ms));
+    try {
+      while (demoRunning){
+        /* 1 — idle pill */
+        heroReset();
+        await wait(2200);
+
+        /* 2 — music */
+        startMusic();
+        await wait(1500);
+        if (!state.expanded) expand();
+        await wait(4600);
+
+        /* 3 — timer ring */
+        collapse();
+        await wait(1200);
+        state.timerOn = false; state.timerDonePending = false;
+        startTimer(15);
+        await wait(4700);
+        state.timerOn = false; state.timerDonePending = false;
+
+        /* 4 — ride live activity */
+        startRide();
+        await wait(4600);
+
+        /* 5 — notification banner */
+        sendNotification();
+        await wait(2600);
+
+        /* 6 — incoming call, then end */
+        startCallIncoming();
+        await wait(900);
+        if (state.phase === "incoming" && !state.expanded) expand();
+        await wait(3800);
+        if (state.phase === "incoming") declineCall();
+        await wait(1600);
+      }
+    } finally {
+      demoRunning = false;
+    }
+  })();
+}
+
+/* tap the island: toggle; tap while idle starts the demo tour */
 island.addEventListener("pointerenter", boot, { once: true });
-setTimeout(boot, 900);
+setTimeout(boot, 600);
+setTimeout(demoTour, 3600);
 
 })();
