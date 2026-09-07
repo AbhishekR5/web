@@ -4,8 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="dark">
-<title>Dynamic Island — Web Playground</title>
-<meta name="description" content="An iPhone-style Dynamic Island recreated in pure HTML, CSS and vanilla JavaScript.">
+<title>Dynamic Island — Now on the Web</title>
+<meta name="description" content="An iPhone-style Dynamic Island recreated in pure HTML, CSS and vanilla JavaScript. Tap a live activity and watch the pill morph.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 32'%3E%3Crect width='64' height='32' rx='16' fill='%23000'/%3E%3Ccircle cx='32' cy='16' r='6' fill='%230a84ff'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -13,21 +14,33 @@
 <!-- Decorative backdrop -->
 <div class="bg" aria-hidden="true">
   <i class="blob b1"></i><i class="blob b2"></i><i class="blob b3"></i>
+  <i class="core-glow"></i>
 </div>
 
 <header class="topbar">
-  <div class="brand">
+  <a class="brand" href="#top">
     <span class="brand-dot" aria-hidden="true"></span>
     Dynamic&nbsp;Island <span class="brand-sub">/ web playground</span>
-  </div>
+  </a>
   <div class="topbar-meta">
     <span class="chip">No libraries</span>
-    <span class="chip">CSS morphing</span>
-    <a class="chip chip-link" href="#dock">Try it ↓</a>
+    <span class="chip">Pure CSS morphing</span>
+    <a class="chip chip-link" href="https://github.com/AbhishekR5/web/tree/arena/01a07d2b-web" target="_blank" rel="noopener">GitHub ↗</a>
   </div>
 </header>
 
-<main class="layout">
+<main class="layout" id="top">
+
+  <!-- ================= HERO ================= -->
+  <div class="hero">
+    <div class="eyebrow"><span class="eyebrow-dot" aria-hidden="true"></span> live interactive demo</div>
+    <h1>The Dynamic Island,<br><span class="grad">now on the web.</span></h1>
+    <p class="hero-sub">
+      A faithful recreation of Apple's iPhone cutout — pure <b>HTML&nbsp;·&nbsp;CSS&nbsp;·&nbsp;vanilla&nbsp;JS</b>.
+      Trigger music, calls, timers and live activities below; the pill morphs with a real spring.
+    </p>
+    <div class="hero-state"><span class="state-ico" aria-hidden="true"></span><span id="stateLabel">Island idle</span></div>
+  </div>
 
   <!-- ================= PHONE MOCK ================= -->
   <section class="phone-zone" aria-label="iPhone mock-up">
@@ -111,83 +124,76 @@
         </div><!-- /screen -->
       </div><!-- /phone -->
     </div>
-    <p class="stage-note" id="stageNote">Island idle — trigger something in the simulator →</p>
+    <p class="stage-note" id="stageNote">The island is idle — launch an activity below ↓</p>
   </section>
 
-  <!-- ================= SIMULATOR DOCK ================= -->
-  <aside class="dock" id="dock">
+  <!-- ================= CONTROL DECK ================= -->
+  <aside class="dock" id="dock" aria-label="Simulator controls">
     <div class="dock-head">
       <h1>Simulator</h1>
-      <span class="state-label" id="stateLabel">Island idle</span>
+      <span class="dock-hint">click any tile → the island responds</span>
     </div>
 
-    <h2 class="group-title">Live activities <small>render inside the island</small></h2>
-
-    <div class="grid grid--2">
+    <div class="tiles">
       <button class="sim" data-trigger="music" aria-pressed="false">
-        <span class="sim-ico sim-ico--music" aria-hidden="true">🎵</span>
-        <span class="sim-txt"><b>Music</b><small>Play / stop demo track</small></span>
+        <span class="sim-ico" aria-hidden="true">🎵</span>
+        <span class="sim-txt"><b>Music</b></span>
         <span class="sim-live" aria-hidden="true"></span>
       </button>
-
       <button class="sim" data-trigger="call" aria-pressed="false">
-        <span class="sim-ico sim-ico--call" aria-hidden="true">📞</span>
-        <span class="sim-txt"><b>Phone call</b><small>Priya is calling…</small></span>
+        <span class="sim-ico" aria-hidden="true">📞</span>
+        <span class="sim-txt"><b>Call</b></span>
         <span class="sim-live" aria-hidden="true"></span>
       </button>
-
       <button class="sim" data-trigger="ride" aria-pressed="false">
-        <span class="sim-ico sim-ico--ride" aria-hidden="true">🚗</span>
-        <span class="sim-txt"><b>Live activity</b><small>Ride arriving in ~2 min</small></span>
+        <span class="sim-ico" aria-hidden="true">🚗</span>
+        <span class="sim-txt"><b>Ride</b></span>
         <span class="sim-live" aria-hidden="true"></span>
       </button>
+      <button class="sim" data-trigger="msg" aria-pressed="false">
+        <span class="sim-ico" aria-hidden="true">💬</span>
+        <span class="sim-txt"><b>Notify</b></span>
+        <span class="sim-live" aria-hidden="true"></span>
+      </button>
+    </div>
 
-      <div class="sim sim--timer">
-        <span class="sim-ico sim-ico--timer" aria-hidden="true">⏱️</span>
-        <span class="sim-txt"><b>Timer</b><small>start a countdown</small></span>
-        <span class="sim-timer-chips">
-          <button data-sec="15"  aria-label="15 second timer">0:15</button>
-          <button data-sec="60"  aria-label="1 minute timer"  class="on">1:00</button>
-          <button data-sec="300" aria-label="5 minute timer">5:00</button>
-        </span>
+    <div class="timer-row">
+      <span class="row-cap">⏱&nbsp; Timer</span>
+      <div class="sim-timer-chips" role="group" aria-label="Timer duration">
+        <button data-sec="15"  aria-label="15 second timer">0:15</button>
+        <button data-sec="60"  aria-label="1 minute timer" class="on">1:00</button>
+        <button data-sec="300" aria-label="5 minute timer">5:00</button>
       </div>
     </div>
 
-    <h2 class="group-title">Notifications <small>slide under the island</small></h2>
-    <button class="sim sim--wide" data-trigger="msg">
-      <span class="sim-ico sim-ico--msg" aria-hidden="true">💬</span>
-      <span class="sim-txt"><b>Send a notification</b><small>cycles Messages · WhatsApp · Mail · Instagram</small></span>
-    </button>
-
-    <h2 class="group-title">Screen states</h2>
-    <div class="switch-row">
-      <button class="sw" data-switch="mic" role="switch" aria-checked="false">
-        <i class="sw-dot sw-dot--mic"></i><span>Mic</span><i class="sw-track" aria-hidden="true"><i></i></i>
-      </button>
-      <button class="sw" data-switch="cam" role="switch" aria-checked="false">
-        <i class="sw-dot sw-dot--cam"></i><span>Camera</span><i class="sw-track" aria-hidden="true"><i></i></i>
-      </button>
-      <button class="sw" data-switch="wifi" role="switch" aria-checked="true">
-        <i class="sw-dot sw-dot--wifi"></i><span>Wi-Fi</span><i class="sw-track" aria-hidden="true"><i></i></i>
-      </button>
-    </div>
-
-    <div class="switch-row switch-row--themes">
-      <span class="sw-label">Wallpaper</span>
-      <button class="theme on" data-theme="aurora"  aria-label="Aurora wallpaper"  style="--t1:#22d3ee;--t2:#0b5bd3;--t3:#111827"></button>
-      <button class="theme"     data-theme="sunset"  aria-label="Sunset wallpaper"  style="--t1:#ffd166;--t2:#ef476f;--t3:#3a1c71"></button>
-      <button class="theme"     data-theme="graphite" aria-label="Graphite wallpaper" style="--t1:#6b7280;--t2:#1f2937;--t3:#020617"></button>
-      <button class="reset" data-reset>Reset all</button>
+    <div class="extras">
+      <div class="switch-row">
+        <button class="sw" data-switch="mic" role="switch" aria-checked="false">
+          <i class="sw-dot sw-dot--mic"></i><span>Mic</span><i class="sw-track" aria-hidden="true"><i></i></i>
+        </button>
+        <button class="sw" data-switch="cam" role="switch" aria-checked="false">
+          <i class="sw-dot sw-dot--cam"></i><span>Camera</span><i class="sw-track" aria-hidden="true"><i></i></i>
+        </button>
+        <button class="sw" data-switch="wifi" role="switch" aria-checked="true">
+          <i class="sw-dot sw-dot--wifi"></i><span>Wi-Fi</span><i class="sw-track" aria-hidden="true"><i></i></i>
+        </button>
+        <span class="vline" aria-hidden="true"></span>
+        <span class="sw-label">Theme</span>
+        <button class="theme on" data-theme="aurora"   aria-label="Aurora wallpaper"  style="--t1:#22d3ee;--t2:#0b5bd3;--t3:#111827"></button>
+        <button class="theme"    data-theme="sunset"   aria-label="Sunset wallpaper"  style="--t1:#ffd166;--t2:#ef476f;--t3:#3a1c71"></button>
+        <button class="theme"    data-theme="graphite" aria-label="Graphite wallpaper" style="--t1:#6b7280;--t2:#1f2937;--t3:#020617"></button>
+        <button class="reset" data-reset>Reset all</button>
+      </div>
     </div>
 
     <p class="dock-help">
-      <kbd>Esc</kbd> / click outside / <kbd>⌄</kbd> collapses &nbsp;·&nbsp; tap the pill to expand &nbsp;·&nbsp; click a sim again to pause it
+      Tap a tile to launch &nbsp;·&nbsp; tap the island (or press <kbd>Esc</kbd>, click outside) to collapse &nbsp;·&nbsp; starting a second activity re-morphs it seamlessly
     </p>
   </aside>
 </main>
 
 <footer class="footer">
-  Built with HTML · CSS · vanilla JS — no frameworks, no images. Morphing is pure <code>border-radius + width/height</code> transitions.
+  Built with <code>HTML</code> <code>CSS</code> <code>vanilla&nbsp;JS</code> — no frameworks, no images. The island is just <code>width + height + border-radius</code> on a springy curve.
 </footer>
 
 <script src="island.js"></script>
