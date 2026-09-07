@@ -764,6 +764,7 @@ const sw = (name, on) => {
    ============================================================ */
 document.querySelectorAll(".sim[data-trigger]").forEach(btn => {
   btn.addEventListener("click", () => {
+    stopDemo();
     const t = btn.dataset.trigger;
     if (t === "music")            startMusic();
     else if (t === "call"){
@@ -875,6 +876,7 @@ function heroReset(){
 }
 
 let demoRunning = false;
+function stopDemo(){ demoRunning = false; }
 function demoTour(){
   if (demoRunning) return;
   demoRunning = true;
@@ -885,36 +887,46 @@ function demoTour(){
         /* 1 — idle pill */
         heroReset();
         await wait(2200);
+    if (!demoRunning) return;
 
         /* 2 — music */
         startMusic();
         await wait(1500);
+    if (!demoRunning) return;
         if (!state.expanded) expand();
         await wait(4600);
+    if (!demoRunning) return;
 
         /* 3 — timer ring */
         collapse();
         await wait(1200);
+    if (!demoRunning) return;
         state.timerOn = false; state.timerDonePending = false;
         startTimer(15);
         await wait(4700);
+    if (!demoRunning) return;
         state.timerOn = false; state.timerDonePending = false;
 
         /* 4 — ride live activity */
         startRide();
         await wait(4600);
+    if (!demoRunning) return;
 
         /* 5 — notification banner */
         sendNotification();
         await wait(2600);
+    if (!demoRunning) return;
 
         /* 6 — incoming call, then end */
         startCallIncoming();
         await wait(900);
+    if (!demoRunning) return;
         if (state.phase === "incoming" && !state.expanded) expand();
         await wait(3800);
+    if (!demoRunning) return;
         if (state.phase === "incoming") declineCall();
         await wait(1600);
+    if (!demoRunning) return;
       }
     } finally {
       demoRunning = false;

@@ -5,34 +5,68 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="dark">
 <title>Dynamic Island — Now on the Web</title>
-<meta name="description" content="An iPhone-style Dynamic Island in pure HTML, CSS and vanilla JavaScript — self-playing hero demo.">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 32'%3E%3Crect width='64' height='32' rx='16' fill='%23000'/%3E%3Ccircle cx='32' cy='16' r='6' fill='%230a84ff'/%3E%3C/svg%3E">
+<meta name="description" content="An iPhone-style Dynamic Island in pure HTML, CSS and vanilla JavaScript — floating in a giant emerald-lit scene.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 32'%3E%3Crect width='64' height='32' rx='16' fill='%23000'/%3E%3Ccircle cx='32' cy='16' r='6' fill='%2330d158'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
 <div class="bg" aria-hidden="true">
-  <i class="blob b1"></i><i class="blob b2"></i><i class="blob b3"></i>
+  <i class="mist m1"></i><i class="mist m2"></i><i class="mist m3"></i>
 </div>
 
 <main class="stage">
 
-  <!-- ============ THE DYNAMIC ISLAND (hero) ============ -->
-  <div class="hero-outer" aria-label="Dynamic Island demo">
-    <div class="eyebrow"><i class="live" aria-hidden="true"></i> Dynamic Island — web edition</div>
-    <div class="floor" aria-hidden="true"></div>
-    <div class="hero">
+  <div class="frame">
+
+    <!-- ======== giant emerald-rimmed capsule ======== -->
+    <div class="capsule" aria-hidden="true"></div>
+    <i class="rim-bottom" aria-hidden="true"></i>
+
+    <!-- glints on the rim -->
+    <i class="glint g1" aria-hidden="true"></i>
+    <i class="glint g2" aria-hidden="true"></i>
+    <i class="glint g3" aria-hidden="true"></i>
+    <i class="glint g4" aria-hidden="true"></i>
+
+    <!-- ======== scene inside the capsule ======== -->
+    <div class="scene">
+
+      <!-- caption line (mirrors the one in the reference) -->
+      <p class="caption"><i class="cdot" aria-hidden="true"></i>The Dynamic Island, on the web<i class="cdot" aria-hidden="true"></i></p>
+
+      <!-- THE DYNAMIC ISLAND (interactive core) -->
       <div class="island" id="island" role="button" tabindex="0" aria-expanded="false" aria-label="Dynamic Island">
         <div class="view view--compact" id="viewCompact"></div>
         <div class="view view--expand" id="viewExpand"></div>
       </div>
-    </div>
-  </div>
 
-  <!-- notification banners (shown beneath the island) -->
-  <div class="banners" id="banners" aria-live="polite"></div>
+      <!-- live activity tiles (like the app tiles in the reference) -->
+      <div class="tiles">
+        <button class="sim" data-trigger="music" aria-pressed="false">
+          <span class="sim-ico" aria-hidden="true">&#9654;&#65038;</span>
+          <span class="sim-txt">Music</span>
+        </button>
+        <button class="sim" data-trigger="call" aria-pressed="false">
+          <span class="sim-ico" aria-hidden="true">&#9742;&#65038;</span>
+          <span class="sim-txt">Call</span>
+        </button>
+        <button class="sim" data-trigger="ride" aria-pressed="false">
+          <span class="sim-ico" aria-hidden="true">&#9201;&#65038;</span>
+          <span class="sim-txt">Ride</span>
+        </button>
+        <button class="sim" data-trigger="msg" aria-pressed="false">
+          <span class="sim-ico" aria-hidden="true">&#9993;&#65038;</span>
+          <span class="sim-txt">Notify</span>
+        </button>
+      </div>
 
-  <!-- hint / state caption -->
+      <!-- notification banners -->
+      <div class="banners" id="banners" aria-live="polite"></div>
+
+    </div><!-- /scene -->
+  </div><!-- /frame -->
+
   <p class="stage-note" id="stageNote">tap the pill · or watch it play</p>
 
 </main>
