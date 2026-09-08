@@ -164,6 +164,7 @@ a{color:inherit}
 }
 
 @keyframes riseIn{from{opacity:0;transform:translateY(26px) scale(.99)}}
+@keyframes blink{50%{opacity:.3}}
 
 /* ---------- responsive ---------- */
 @media (max-width:680px){
@@ -177,192 +178,48 @@ a{color:inherit}
   *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important}
 }
 
-THE DYNAMIC ISLAND
-   ============================================================ */
-.island{
-  position:absolute;top:12px;left:0;right:0;margin:0 auto;z-index:40;
-  width:var(--w,116px);height:var(--h,34px);
-  border-radius:999px;
-  background:var(--pill,#000);
-  box-shadow:0 0 0 .5px rgba(255,255,255,.06),
-             0 10px 30px rgba(0,0,0,.45),
-             inset 0 0 0 1px rgba(255,255,255,.05);
-  cursor:pointer;user-select:none;touch-action:none;
-  transition:width .66s var(--ease),height .66s var(--ease),
-             border-radius .66s var(--ease),background .4s ease,
-             box-shadow .5s ease;
-}
-.island.expanded{
-  box-shadow:0 0 0 .5px rgba(255,255,255,.07),
-             0 34px 90px -10px rgba(0,0,0,.75),
-             inset 0 0 0 1px rgba(255,255,255,.06);
-}
-/* green pill while on a call (compact only) */
-.island.kind-call:not(.expanded){background:linear-gradient(165deg,#43e07a,#0c9e4b)}
-.island.kind-call:not(.expanded).expanded{background:#000}
-
-/* --- resting --- */
-.island{--w:116px;--h:34px}
-/* --- compact sizes (per activity) --- */
-.island.kind-music{--w:152px;--h:38px}
-.island.kind-timer{--w:146px;--h:38px}
-.island.kind-ride {--w:150px;--h:38px}
-.island.kind-call {--w:174px;--h:40px}
-/* --- expanded sizes (per activity) --- */
-.island.kind-music.expanded{--w:286px;--h:348px;--r:30px;border-radius:var(--r,30px)}
-.island.kind-timer.expanded{--w:286px;--h:316px;--r:30px;border-radius:var(--r,30px)}
-.island.kind-call.expanded {--w:286px;--h:316px;--r:30px;border-radius:var(--r,30px)}
-.island.kind-ride.expanded {--w:286px;--h:270px;--r:30px;border-radius:var(--r,30px)}
-
-/* --- views --- */
-.view{
-  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
-  pointer-events:none;
-}
-.view--expand{opacity:0;visibility:hidden;transform:scale(.94) translateY(8px);
-  transition:opacity .24s ease,transform .3s ease,visibility 0s linear .3s;}
-.island.expanded .view--expand{opacity:1;visibility:visible;transform:none;pointer-events:auto;
-  transition:opacity .26s ease .18s,transform .34s var(--spring) .18s,visibility 0s;}
-.view--compact{transition:opacity .12s ease,transform .18s ease}
-.island.expanded .view--compact{opacity:0;transform:scale(.92);visibility:hidden}
-
-/* ---------- compact content ---------- */
-.compact{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;height:100%;
-  color:#fff;padding:0 12px;white-space:nowrap}
-.c-art{width:24px;height:24px;border-radius:7px;flex:none;display:grid;place-items:center;font-size:13px;
-  box-shadow:inset 0 0 0 .5px rgba(255,255,255,.25),0 2px 6px rgba(0,0,0,.4)}
-.kind-music .compact .c-title{flex:1;min-width:0;max-width:none;text-align:left;font-size:12.5px}
-.compact .c-title{font-size:12px;font-weight:600;max-width:64px;overflow:hidden;text-overflow:ellipsis}
-.compact .c-sub{font-size:10px;opacity:.75}
-.compact .c-time{font-size:13px;font-weight:600;font-variant-numeric:tabular-nums}
-.c-ring{width:20px;height:20px;border-radius:50%;position:relative;flex:none}
-.c-ring i{position:absolute;inset:3.5px;background:#000;border-radius:50%}
-
-/* equalizer bars */
-.eq{display:inline-flex;align-items:flex-end;gap:2.5px;height:15px}
-.eq i{width:3px;border-radius:2px;background:currentColor;height:35%;animation:eq 1s ease-in-out infinite}
-.eq i:nth-child(2){animation-delay:.2s}.eq i:nth-child(3){animation-delay:.4s}
-.eq i:nth-child(4){animation-delay:.1s}.eq i:nth-child(5){animation-delay:.3s}
-.eq.paused i{animation-play-state:paused;height:20%;opacity:.6}
-@keyframes eq{0%,100%{height:25%}50%{height:100%}}
-
 /* ============================================================
-   EXPANDED WIDGETS
+   LIGHT ENGINE — static island pill + notifications
    ============================================================ */
-.widget{position:relative;width:100%;height:100%;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;gap:14px;color:#fff;padding:28px 22px 26px}
-.grabber{position:absolute;bottom:9px;left:50%;transform:translateX(-50%);width:40px;height:5px;
-  border-radius:4px;background:rgba(255,255,255,.32)}
-.icon-btn{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;color:rgba(255,255,255,.85);
-  background:rgba(255,255,255,.08);transition:background .2s,transform .15s;flex:none}
-.icon-btn:hover{background:rgba(255,255,255,.18)}
-.icon-btn:active{transform:scale(.92)}
-.ghost{display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:600;color:#dfe4ee;
-  background:rgba(255,255,255,.1);padding:9px 18px;border-radius:999px;transition:background .2s,transform .15s}
-.ghost:hover{background:rgba(255,255,255,.2)}
-.ghost:active{transform:scale(.95)}
-.ghost--red{background:rgba(255,69,58,.22);color:#ff9d96}
-.ghost--red:hover{background:rgba(255,69,58,.35)}
-.ghost--ok{background:rgba(48,209,88,.18);color:#a6f2bd}
-.ghost--ok:hover{background:rgba(48,209,88,.32)}
 
-/* ----- music ----- */
-.widget-music .m-row{display:flex;align-items:center;gap:14px;width:100%}
-.m-art{width:58px;height:58px;border-radius:16px;flex:none;display:grid;place-items:center;font-size:26px;
-  box-shadow:inset 0 0 0 .5px rgba(255,255,255,.25),0 10px 24px -6px rgba(0,0,0,.6)}
-.m-meta{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
-.m-meta b{font-size:15.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.m-meta span{font-size:12.5px;color:rgba(255,255,255,.62)}
-.m-scrub{width:100%;display:flex;flex-direction:column;gap:7px}
-.scrub{position:relative;width:100%;height:20px;display:flex;align-items:center;cursor:pointer}
-.scrub-track{position:relative;width:100%;height:5px;border-radius:3px;background:rgba(255,255,255,.22);overflow:visible}
-.scrub-fill{position:absolute;left:0;top:0;bottom:0;width:0%;border-radius:3px;background:#fff}
-.scrub-knob{position:absolute;top:50%;left:0%;width:15px;height:15px;border-radius:50%;background:#fff;
-  transform:translate(-50%,-50%) scale(0);transition:transform .18s var(--spring);box-shadow:0 2px 8px rgba(0,0,0,.5)}
-.scrub:hover .scrub-knob,.scrub.down .scrub-knob{transform:translate(-50%,-50%) scale(1)}
-.scrub-time{display:flex;justify-content:space-between;font-size:11.5px;color:rgba(255,255,255,.62);font-variant-numeric:tabular-nums}
-.m-controls{display:flex;align-items:center;justify-content:center;gap:26px;width:100%;margin-top:2px}
-.m-controls .cbig{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;background:#fff;color:#000;
-  box-shadow:0 8px 22px -4px rgba(0,0,0,.5);transition:transform .15s,opacity .2s}
-.m-controls .cbig:hover{transform:scale(1.06)}
-.m-controls .cbig:active{transform:scale(.94)}
-.m-controls .cmed{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;color:#fff;
-  background:rgba(255,255,255,.1);transition:background .2s,transform .15s}
-.m-controls .cmed:hover{background:rgba(255,255,255,.22)}
-.m-controls .cmed:active{transform:scale(.92)}
+/* --- Dynamic Island signature pill (static) --- */
+.scene .island{
+  width:118px;height:36px;border-radius:999px;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(48,209,88,.14), transparent 72%),
+    #000;
+  box-shadow:0 0 0 1px rgba(255,255,255,.05),
+             0 0 34px -6px rgba(48,209,88,.55),
+             inset 0 0 10px rgba(48,209,88,.22);
+  cursor:pointer;user-select:none;
+  transition:box-shadow .35s ease;
+}
+.scene .island:hover{box-shadow:0 0 0 1px rgba(255,255,255,.07),
+  0 0 46px -4px rgba(48,209,88,.8),inset 0 0 12px rgba(48,209,88,.3)}
+.scene .island::after{ /* green camera dot */
+  content:"";position:absolute;top:50%;left:50%;
+  width:8px;height:8px;border-radius:50%;
+  transform:translate(-50%,-50%);
+  background:radial-gradient(circle at 35% 32%, #8df0b4, #0d8a44 58%, #0a5c2e);
+  box-shadow:0 0 12px rgba(48,209,88,.95);
+}
+.scene .island.pop{animation:pillPop .55s var(--spring)}
+@keyframes pillPop{
+  0%{transform:translateX(-50%) scale(1)}
+  30%{transform:translateX(-50%) scale(1.16)}
+  100%{transform:translateX(-50%) scale(1)}
+}
 
-/* ----- call ----- */
-.widget-call{text-align:center}
-.call-avatar-wrap{position:relative;width:88px;height:88px;display:grid;place-items:center}
-.call-pulse{position:absolute;inset:0;border-radius:50%;border:1.5px solid rgba(255,255,255,.5);animation:callPulse 1.8s var(--ease) infinite}
-.call-pulse:nth-child(2){animation-delay:.6s}
-.call-pulse:nth-child(3){animation-delay:1.2s}
-@keyframes callPulse{0%{transform:scale(.82);opacity:1}100%{transform:scale(1.45);opacity:0}}
-.call-avatar{width:80px;height:80px;border-radius:50%;display:grid;place-items:center;color:#fff;
-  font-size:30px;font-weight:700;background:linear-gradient(150deg,#0a84ff,#4f5bd5 55%,#8e5bff);
-  box-shadow:0 14px 34px -8px rgba(74,90,255,.6),inset 0 0 0 .5px rgba(255,255,255,.3)}
-.call-name{font-size:20px;font-weight:700}
-.call-sub{font-size:13px;color:rgba(255,255,255,.6);display:flex;align-items:center;gap:6px}
-.call-sub .dot-live{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:blink 1.6s infinite}
-.call-actions{display:flex;gap:34px;margin-top:4px}
-.call-act{display:flex;flex-direction:column;align-items:center;gap:7px;font-size:11.5px;color:rgba(255,255,255,.85)}
-.call-circle{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;transition:transform .15s,filter .2s;
-  box-shadow:0 10px 24px -6px rgba(0,0,0,.6)}
-.call-circle:active{transform:scale(.92)}
-.call-circle--decline{background:linear-gradient(160deg,#ff6b61,#d3162d)}
-.call-circle--accept{background:linear-gradient(160deg,#4ce07d,#0fa04a)}
-.call-circle--hang{background:linear-gradient(160deg,#ff5d54,#d0021b)}
-.call-circle--ghost{background:rgba(255,255,255,.12);color:#fff}
-.call-circle--ghost.on{background:rgba(10,132,255,.9)}
-/* active call */
-.call-timer{font-size:44px;font-weight:200;font-variant-numeric:tabular-nums;letter-spacing:1px;line-height:1}
-.widget-call.active .call-avatar{width:58px;height:58px;font-size:22px}
-.widget-call.active .call-avatar-wrap{width:58px;height:58px}
-.widget-call.active .call-actions{gap:22px}
-
-/* ----- timer ----- */
-.widget-timer .t-cap{font-size:11px;font-weight:700;letter-spacing:2.5px;color:rgba(255,255,255,.55)}
-.t-ring{position:relative;width:180px;height:180px;border-radius:50%;flex:none;
-  -webkit-mask:radial-gradient(closest-side,transparent calc(100% - 13px),#000 calc(100% - 12px));
-  mask:radial-gradient(closest-side,transparent calc(100% - 13px),#000 calc(100% - 12px));
-  background:conic-gradient(from -90deg,var(--orange) 360deg,rgba(255,255,255,.1) 0deg)}
-.t-ring.paused{background:conic-gradient(from -90deg,rgba(255,255,255,.55) 360deg,rgba(255,255,255,.1) 0deg)}
-.t-ring .t-in{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
-.t-in b{font-size:40px;font-weight:200;font-variant-numeric:tabular-nums;letter-spacing:.5px}
-.t-in small{font-size:11px;color:rgba(255,255,255,.5);font-weight:600;letter-spacing:1px}
-.t-actions{display:flex;gap:10px}
-
-/* ----- ride ----- */
-.widget-ride{justify-content:center;gap:10px}
-.ride-app{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;width:100%}
-.ride-logo{width:22px;height:22px;border-radius:6px;display:grid;place-items:center;font-size:11px;font-weight:800;
-  background:linear-gradient(150deg,#22d3ee,#0ea5e9 60%,#2563eb);color:#fff;box-shadow:0 4px 10px -2px rgba(14,165,233,.7)}
-.ride-live{margin-left:auto;font-size:9.5px;font-weight:800;letter-spacing:1.6px;color:#30d158;background:rgba(48,209,88,.14);
-  padding:3px 7px;border-radius:999px;animation:blink 2s infinite}
-.ride-main{width:100%;display:flex;flex-direction:column;gap:3px}
-.ride-main small{font-size:12px;color:rgba(255,255,255,.55)}
-.ride-main b{font-size:20px;font-weight:700;letter-spacing:-.2px;font-variant-numeric:tabular-nums}
-.ride-car{width:100%;display:flex;align-items:center;gap:8px;font-size:12.5px;color:rgba(255,255,255,.75)}
-.ride-car svg{flex:none;opacity:.9}
-.ride-car .plate{margin-left:auto;font-size:10.5px;font-weight:700;letter-spacing:.6px;background:rgba(255,255,255,.14);
-  padding:3px 7px;border-radius:5px;font-variant-numeric:tabular-nums}
-.progress{width:100%;height:5px;border-radius:3px;background:rgba(255,255,255,.16);overflow:hidden}
-.progress i{display:block;height:100%;width:0%;border-radius:3px;background:linear-gradient(90deg,#22d3ee,#0ea5e9);
-  transition:width .4s linear}
-.ride-arrived b{color:#30d158}
-
-/* ============================================================
-   NOTIFICATION BANNERS
-   ============================================================ */
-.banners{position:absolute;left:50%;transform:translateX(-50%);width:290px;z-index:15;top:64px;
-  display:flex;flex-direction:column;gap:9px;pointer-events:none}
-.banner{pointer-events:auto;display:flex;align-items:center;gap:10px;background:rgba(245,247,250,.94);color:#16181d;
-  border-radius:19px;padding:9px 13px;cursor:pointer;backdrop-filter:blur(18px);
-  box-shadow:0 16px 40px -8px rgba(0,0,0,.55);
+/* ---------- notification banners ---------- */
+.banner{
+  display:flex;align-items:center;gap:10px;background:rgba(245,247,250,.96);color:#16181d;
+  border-radius:19px;padding:9px 13px;cursor:pointer;
+  box-shadow:0 18px 44px -10px rgba(0,0,0,.6),inset 0 0 0 1px rgba(255,255,255,.6);
   animation:bannerIn .5s var(--spring) both;
-  transition:opacity .3s ease,transform .3s ease}
+  transition:opacity .3s ease,transform .3s ease;
+}
 .banner.leave{opacity:0;transform:translateY(-16px) scale(.94)}
-@keyframes bannerIn{from{opacity:0;transform:translateY(-22px) scale(.9)}}
+@keyframes bannerIn{from{opacity:0;transform:translateY(-20px) scale(.92)}}
 .banner-ico{width:34px;height:34px;border-radius:8.5px;flex:none;display:grid;place-items:center;color:#fff;
   font-size:15px;font-weight:800}
 .banner-body{min-width:0;flex:1}
@@ -371,47 +228,7 @@ THE DYNAMIC ISLAND
 .banner-top time{font-size:11px;color:#7b8089;flex:none}
 .banner-body p{font-size:13px;color:#3a3f47;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
 
-
-/* ============================================================
-   /* ============================================================
-   /* ============================================================
-   HERO-OVERRIDES — scene internals
-   ============================================================ */
-/* re-assert island anchoring (engine sets top:12/left:0/right:0) */
-.scene .island{top:clamp(104px,15.5vh,150px);left:50%;right:auto;margin:0;transform:translateX(-50%)}
-/* app tiles (like the bright-glyph tiles in the reference) */
-.tiles{
-  position:absolute;left:0;right:0;bottom:13%;
-  display:flex;align-items:flex-start;justify-content:center;gap:clamp(26px,7vw,96px);
-}
-.sim{position:relative;display:flex;flex-direction:column;align-items:center;gap:10px;
-  padding:6px 4px;border-radius:20px;transition:transform .2s}
-.sim:active{transform:scale(.93)}
-.sim-ico{
-  width:clamp(48px,6.6vh,62px);height:clamp(48px,6.6vh,62px);border-radius:clamp(14px,2vh,19px);
-  display:grid;place-items:center;color:#f2fff8;font-size:clamp(19px,2.6vh,24px);
-  background:linear-gradient(165deg,rgba(255,255,255,.07),rgba(255,255,255,.02));
-  border:1px solid rgba(150,255,200,.14);
-  box-shadow:0 10px 26px -10px rgba(0,0,0,.8), inset 0 1px 0 rgba(255,255,255,.08);
-  transition:border-color .25s,box-shadow .3s,color .25s;
-  font-variant-numeric:tabular-nums;
-}
-.sim-txt{font-size:11px;font-weight:600;letter-spacing:1.6px;text-transform:uppercase;color:rgba(230,255,242,.6)}
-.sim:hover .sim-ico{border-color:rgba(48,209,88,.6);box-shadow:0 0 26px -6px rgba(48,209,88,.65)}
-.sim[aria-pressed="true"] .sim-ico{
-  border-color:rgba(48,209,88,.95);color:#b6ffd6;
-  box-shadow:0 0 0 1px rgba(48,209,88,.25),0 0 30px -4px rgba(48,209,88,.8);
-}
-.sim[aria-pressed="true"] .sim-txt{color:#8fffc0}
-
-/* banners sit low inside the oval, under the island card */
-.scene .banners{
-  position:absolute;left:50%;top:auto;bottom:calc(13% + 150px);
-  transform:translateX(-50%);width:min(300px,80vw);z-index:6;
-}
-
-/* hint under the frame */
-.stage .stage-note{margin-top:2px;font-size:12.5px;color:var(--mut);letter-spacing:.4px}
-
-@keyframes riseIn{from{opacity:0;transform:translateY(26px) scale(.99)}}
-
+/* ---------- hint under the frame ---------- */
+.stage-note{margin-top:2px;font-size:12.5px;color:var(--mut);letter-spacing:.4px;text-align:center;
+  min-height:18px;transition:color .3s}
+.stage-note.hot{color:#8fffc0}

@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="dark">
-<title>Connect with us — Dynamic Island</title>
-<meta name="description" content="Connect with us — an interactive Dynamic Island in a giant emerald-lit scene. HTML · CSS · vanilla JS.">
+<title>Connect with us</title>
+<meta name="description" content="Connect with us — Instagram, Facebook, WhatsApp, LinkedIn. Visit the website or send an email.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 32'%3E%3Crect width='64' height='32' rx='16' fill='%23000'/%3E%3Ccircle cx='32' cy='16' r='6' fill='%2330d158'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="styles.css">
 </head>
@@ -22,7 +22,7 @@
     <!-- ======== giant emerald-rimmed capsule ======== -->
     <div class="capsule" aria-hidden="true"></div>
 
-    <!-- thin glow bars near top & bottom edges (from the reference) -->
+    <!-- thin glow bars near top & bottom edges -->
     <i class="edge-bar edge-bar--top" aria-hidden="true"></i>
     <i class="edge-bar edge-bar--bottom" aria-hidden="true"></i>
 
@@ -36,16 +36,13 @@
     <!-- ======== scene ======== -->
     <div class="scene">
 
-      <!-- title line, verbatim from the reference -->
+      <!-- title -->
       <p class="title">Connect with&nbsp;us</p>
 
-      <!-- THE DYNAMIC ISLAND (interactive hero) -->
-      <div class="island" id="island" role="button" tabindex="0" aria-expanded="false" aria-label="Dynamic Island">
-        <div class="view view--compact" id="viewCompact"></div>
-        <div class="view view--expand" id="viewExpand"></div>
-      </div>
+      <!-- Dynamic Island (decorative signature) -->
+      <div class="island" id="island" aria-hidden="true"></div>
 
-      <!-- social tiles (icon above label, like the reference) -->
+      <!-- social tiles -->
       <div class="tiles">
         <button class="tile" data-app="Instagram" aria-pressed="false">
           <span class="t-ico">
@@ -73,7 +70,7 @@
         </button>
       </div>
 
-      <!-- action buttons, verbatim from the reference -->
+      <!-- action buttons -->
       <div class="actions">
         <a class="pill-btn" href="https://abhishekr5.github.io/web/" target="_blank" rel="noopener">Visit Website</a>
         <a class="pill-btn" href="mailto:hello@abhishekr5.dev">Send Email</a>
@@ -85,7 +82,7 @@
     </div><!-- /scene -->
   </div><!-- /frame -->
 
-  <p class="stage-note" id="stageNote">the island is live — tap it, or tap a handle below</p>
+  <p class="stage-note" id="stageNote">tap a channel to say hello</p>
 
 </main>
 
