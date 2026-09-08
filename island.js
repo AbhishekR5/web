@@ -100,9 +100,26 @@ if (island){
   });
 }
 
-/* unlock audio on the first gesture (mobile policy) */
-document.addEventListener("pointerdown", () => {
-  try { if (actx && actx.state === "suspended") actx.resume(); } catch(e){}
-}, { once: false });
+/* ---------- sticky top-middle on scroll ----------
+   As soon as the user scrolls down, the island detaches from the
+   scene and pins to the top-center of the viewport; it slides back
+   into its original spot when the user returns to the top. */
+let pinned = false;
+
+function onScroll(){
+  if (!island) return;
+
+  if (!pinned && window.scrollY > 12){
+    island.classList.add("is-pinned");
+    pinned = true;
+  } else if (pinned && window.scrollY <= 4){
+    island.classList.remove("is-pinned");
+    pinned = false;
+  }
+}
+
+window.addEventListener("scroll", onScroll, { passive: true });
+window.addEventListener("resize", onScroll, { passive: true });
+onScroll();
 
 })();
