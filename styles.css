@@ -241,15 +241,18 @@ body.is-docked .glint{opacity:0}
   margin:0 auto;
   transform:translateY(-50%) scale(.88);
   border-radius:999px;
+  /* black glass + subtle inner top reflection + faint emerald center light */
   background:
-    radial-gradient(60% 130% at 50% 50%, rgba(48,209,88,.12), transparent 78%),
-    linear-gradient(180deg,rgba(14,34,22,.92),rgba(2,7,4,.97));
+    radial-gradient(58% 150% at 50% 44%, rgba(48,209,88,.13), transparent 76%),
+    linear-gradient(180deg, rgba(255,255,255,.055) 0%, rgba(255,255,255,0) 34%),
+    linear-gradient(180deg, rgba(15,38,24,.93) 0%, rgba(2,6,3,.98) 100%);
   border:calc(1px * var(--u)) solid rgba(125,255,185,.42);
   box-shadow:
     0 0 calc(32px * var(--u)) rgba(48,209,88,.42),
     0 calc(10px * var(--u)) calc(26px * var(--u)) rgba(0,0,0,.6),
     inset 0 0 calc(14px * var(--u)) rgba(48,209,88,.14),
-    inset 0 calc(1px * var(--u)) 0 rgba(255,255,255,.14);
+    inset 0 calc(1px * var(--u)) 0 rgba(255,255,255,.16),
+    inset 0 calc(-1px * var(--u)) 0 rgba(0,0,0,.5);
   backdrop-filter:blur(12px);
   -webkit-backdrop-filter:blur(12px);
   opacity:0;visibility:hidden;pointer-events:none;
