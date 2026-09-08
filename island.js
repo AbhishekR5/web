@@ -2,10 +2,13 @@
    Connect page — light interactions + scroll flight
 
    The giant emerald capsule is ONE object. On scroll it is
-   scrubbed (GPU translate3d + scale only) from the centered hero
-   pose to a compact floating Dynamic Island at the top-right.
-   The scrub is 1:1 with scroll — slow scroll = slow movement,
-   fast scroll = no jumps — and fully reversible.
+   scrubbed (GPU translate3d + scale only) straight UP from the
+   centered hero pose to a compact Dynamic-Island pill at TOP
+   CENTER (x stays at 50% viewport). The scrub is 1:1 with
+   scroll — slow scroll = slow movement, fast scroll = no
+   jumps — and fully reversible. Tapping the docked pill
+   expands the contact panel; it collapses on outside tap /
+   Esc / scrolling back up.
    ============================================================ */
 (() => {
 "use strict";
@@ -19,7 +22,9 @@ const island   = $("#island");
 const frame    = $("#frame");
 const pinner   = $("#pinner");
 const hero     = $("#hero");
-const dock     = $("#dock");
+const pill     = $("#pill");
+const panel    = $("#panel");
+const root     = document.documentElement;
 const body     = document.body;
 
 const BRAND = {
@@ -91,12 +96,12 @@ function sendNotification(app){
   while (banners.children.length > 3) banners.lastChild.remove();
 }
 
-/* ---------- social tiles + compact dock chips (shared behavior) ---------- */
+/* ---------- social tiles + expanded-panel rows (shared behavior) ---------- */
 function press(app){
-  document.querySelectorAll(".tile[data-app], .pop-row[data-app]").forEach(x =>
+  document.querySelectorAll(".tile[data-app], .pan-row[data-app]").forEach(x =>
     x.setAttribute("aria-pressed", String(x.dataset.app === app)));
 }
-document.querySelectorAll(".tile[data-app], .pop-row[data-app]").forEach(t => {
+document.querySelectorAll(".tile[data-app], .pan-row[data-app]").forEach(t => {
   t.addEventListener("click", () => {
     press(t.dataset.app);
     sendNotification(t.dataset.app);
@@ -119,11 +124,12 @@ if (island){
 /* ============================================================
    SCROLL FLIGHT ENGINE
    The whole frame is transformed per-frame with
-   translate3d(...) scale(...) — never width/height/top/left.
+   translate3d(0, ty, 0) scale(s) — never width/height/top/left,
+   and never horizontally (the island stays at 50% viewport).
    ============================================================ */
 const rmQuery = window.matchMedia ? matchMedia("(prefers-reduced-motion: reduce)") : null;
 
-const G = { on: false, cx0: 0, cy0: 0, cx: 0, cy: 0, sF: 0.3, u: 1, vh: 0 };
+const G = { on: false, cx0: 0, cy0: 0, cyD: 0, sF: 0.15, u: 1, vh: 0 };
 
 function safeInsets(){
   /* read env(safe-area-inset-*) through a probe element */
@@ -147,42 +153,32 @@ function measure(){
   const fw = frame.offsetWidth, fh = frame.offsetHeight;
   const pr = pinner.getBoundingClientRect();
 
-  /* --- target compact width per viewport --- */
-  let dw;
-  if (vw >= 1100)      dw = clamp(vw * 0.24, 300, 380);
-  else if (vw >= 820)  dw = clamp(vw * 0.33, 280, 340);
-  else if (vw >= 640)  dw = clamp(vw * 0.40, 240, 300);
-  else                 dw = clamp(vw * 0.64, 200, 286);
+  /* --- compact pill size per viewport (spec ranges) --- */
+  let pw, ph;
+  if (vw >= 1100){      pw = clamp(vw * 0.11, 130, 180); ph = clamp(vw * 0.028, 36, 48); }
+  else if (vw >= 820){  pw = clamp(vw * 0.16, 120, 160); ph = clamp(vw * 0.045, 34, 44); }
+  else if (vw >= 640){  pw = clamp(vw * 0.20, 120, 160); ph = clamp(vw * 0.05, 32, 42); }
+  else {                pw = clamp(vw * 0.36, 110, 150); ph = clamp(vw * 0.10, 32, 42); }
 
-  /* scale to reach it; keep the compact capsule tall enough to be
-     comfortable (wide screens) while never exceeding ~26% of a
-     very large desktop width */
-  let s = dw / fw;
-  if (vw >= 820) {
-    const minH = 190;
-    if (fh * s < minH) s = minH / fh;
-    if (vw >= 1100 && fw * s > 400) s = 400 / fw;
-  }
-  s = clamp(s, 0.16, 1);
-  const DH = fh * s;
+  /* the frame condenses until its width equals the pill width */
+  const s = clamp(pw / fw, 0.08, 1);
 
-  const { st, sr } = safeInsets();
-  const right = clamp(vw * 0.025, 12, 30) + sr;
-  const top = st > 0 ? st + 8 : 18;
+  const { st } = safeInsets();
+  const top = st > 0 ? st + 10 : 18;
 
-  /* hero center (layout — flex-centered inside the sticky pinner;
-     padding is symmetric so the frame center is the pinner center) */
   const cs = getComputedStyle(pinner);
   const pt = parseFloat(cs.paddingTop) || 0;
   const pb = parseFloat(cs.paddingBottom) || 0;
-  G.cx0 = pr.left + pr.width / 2;
+  G.cx0 = pr.left + pr.width / 2;        /* hero center x — stays the final x */
   G.cy0 = pr.top + pt + (pr.height - pt - pb) / 2;
-  G.cx  = vw - (dw / 2 + right);                 /* docked center */
-  G.cy  = top + DH / 2;
+  G.cyD = top + ph / 2;                  /* docked frame center (pill centered) */
   G.sF  = s;
   G.u   = 1 / s;
   G.vh  = vh;
+
   if (frame) frame.style.setProperty("--u", G.u.toFixed(3));
+  root.style.setProperty("--sit", top + "px");
+  root.style.setProperty("--sph", ph + "px");
 }
 
 function scrub(){
@@ -192,38 +188,66 @@ function scrub(){
   let p = max > 0 ? (window.scrollY || 0) / max : 1;
   p = clamp(p, 0, 1);
 
-  /* easing: rise happens first, slide-right follows, everything
-     settles gently — pure 1:1 scroll mapping, reversible */
-  const y = Math.sin(Math.PI * 0.5 * p);         /* ease-out-sine travel */
-  const x = (1 - Math.cos(Math.PI * p)) / 2;     /* ease-in-out-sine slide */
-
-  const sc  = 1 - (1 - G.sF) * y;
-  const tx  = (G.cx - G.cx0) * x;
-  const ty  = (G.cy - G.cy0) * y;
+  /* ease-in-out: subtle at the start (phase 1), steady through the
+     middle (phase 2), settling at the end (phase 3) — pure 1:1
+     scroll mapping, reversible */
+  const e = (1 - Math.cos(Math.PI * p)) / 2;
+  const sc = 1 - (1 - G.sF) * e;
+  const ty = (G.cyD - G.cy0) * e;                /* straight up, x unchanged */
 
   frame.style.transform =
-    "translate3d(" + tx.toFixed(2) + "px," + ty.toFixed(2) + "px,0) scale(" + sc.toFixed(4) + ")";
+    "translate3d(0px," + ty.toFixed(2) + "px,0) scale(" + sc.toFixed(4) + ")";
 
-  /* compact state crossfades, with hysteresis so a slow scroll near a
+  /* state crossfades with hysteresis so a slow scroll near a
      threshold never flickers */
-  if (p >= 0.82) setDocked(true);          /* compact UI + glass in */
-  else if (p <= 0.74) setDocked(false);
-  if (p >= 0.70) setMin(true);             /* hero content out (object too small) */
-  else if (p <= 0.50) setMin(false);
+  if (p >= 0.80) setDocked(true);        /* pill replaces the rim */
+  else if (p <= 0.72) setDocked(false);
+  if (p >= 0.55) setMin(true);           /* interior content fades out */
+  else if (p <= 0.38) setMin(false);
 }
 
-let docked = false, min = false;
+let docked = false, min = false, open = false;
+
 function setDocked(on){
   if (docked === on) return;
   docked = on;
   body.classList.toggle("is-docked", on);
-  if (dock) dock.setAttribute("aria-hidden", String(!on));
+  if (!on) setOpen(false);
 }
 function setMin(on){
   if (min === on) return;
   min = on;
   body.classList.toggle("is-min", on);
 }
+
+/* ---------- expand / collapse of the contact panel ---------- */
+function setOpen(on){
+  if (open === on) return;
+  open = on;
+  body.classList.toggle("is-open", on);
+  if (pill) pill.setAttribute("aria-expanded", String(on));
+  if (panel){
+    panel.setAttribute("aria-hidden", String(!on));
+    if (on){
+      const first = panel.querySelector(".pan-row, a");
+      if (first && document.activeElement && document.activeElement === pill) first.focus({ preventScroll: true });
+    }
+  }
+}
+
+if (pill){
+  pill.addEventListener("click", () => { if (docked) setOpen(!open); });
+}
+/* collapse on outside tap or Escape */
+document.addEventListener("pointerdown", (ev) => {
+  if (!open) return;
+  if (panel && panel.contains(ev.target)) return;
+  if (pill && (pill === ev.target || pill.contains(ev.target))) return;
+  setOpen(false);
+}, { passive: true });
+document.addEventListener("keydown", (ev) => {
+  if (ev.key === "Escape") setOpen(false);
+});
 
 /* event-driven rAF batch (no busy loop) */
 let dirty = false;
@@ -238,7 +262,6 @@ function startEngine(){
   if (!frame || !pinner || !hero) return;
   G.on = true;
   measure();
-  setDocked(false);
   const remeasure = () => { measure(); requestScrub(); };
   window.addEventListener("scroll", requestScrub, { passive: true });
   window.addEventListener("resize", remeasure, { passive: true });
@@ -255,7 +278,8 @@ function stopEngine(){
   G.on = false;
   setDocked(false);
   setMin(false);
-  body.classList.remove("is-docked", "is-min");
+  setOpen(false);
+  body.classList.remove("is-docked", "is-min", "is-open");
   if (frame) frame.style.transform = "";
 }
 
@@ -270,7 +294,7 @@ if (rmQuery && rmQuery.addEventListener) rmQuery.addEventListener("change", sync
 /* entry rise-in finished → drop the animation so it can never fight
    the scrubbed transform */
 window.addEventListener("load", () => {
-  setTimeout(() => document.documentElement.classList.add("ready"), 1250);
+  setTimeout(() => root.classList.add("ready"), 1250);
 });
 
 syncMotionPref();

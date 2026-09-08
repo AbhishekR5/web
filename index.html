@@ -18,9 +18,10 @@
 <main class="stage">
 
   <!--
-    ONE scroll runway (the hero). While the user reads, the sticky
+    ONE scroll runway (the hero). While the page scrolls, the sticky
     pinner holds the capsule in view and the whole frame is scrubbed
-    from its centered hero pose to a compact top-right Dynamic Island.
+    (scroll-scrubbed, reversible, GPU transforms only) from its centered
+    hero pose up to a compact Dynamic-Island pill at TOP CENTER.
   -->
   <div class="hero" id="hero">
 
@@ -28,9 +29,6 @@
 
       <!-- ================= the one and only capsule ================= -->
       <div class="frame" id="frame">
-
-        <!-- glass fill that appears when the capsule turns compact -->
-        <div class="dglass" aria-hidden="true"></div>
 
         <!-- giant emerald rim -->
         <div class="capsule" aria-hidden="true"></div>
@@ -87,28 +85,12 @@
 
         </div><!-- /scene -->
 
-        <!-- ============ compact docked UI (lives inside the same capsule) ============ -->
-        <div class="dock" id="dock" aria-hidden="true">
-          <p class="pop-head"><i class="cdot" aria-hidden="true"></i>Connect with&nbsp;us</p>
-          <div class="pop-body" role="group" aria-label="Social channels">
-            <button class="pop-row" data-app="Instagram">
-              <span class="pop-ico" style="--c1:#e1306c;--c2:#833ab4" aria-hidden="true">&#128247;</span>Instagram
-            </button>
-            <button class="pop-row" data-app="Facebook">
-              <span class="pop-ico" style="--c1:#1877f2;--c2:#0a4fc0" aria-hidden="true">&#128077;</span>Facebook
-            </button>
-            <button class="pop-row" data-app="WhatsApp">
-              <span class="pop-ico" style="--c1:#25d366;--c2:#0b8a3c" aria-hidden="true">&#128172;</span>WhatsApp
-            </button>
-            <button class="pop-row" data-app="LinkedIn">
-              <span class="pop-ico" style="--c1:#0a66c2;--c2:#004182" aria-hidden="true">&#128188;</span>LinkedIn
-            </button>
-          </div>
-          <div class="pop-actions">
-            <a class="pill-btn" href="https://abhishekr5.github.io/web/" target="_blank" rel="noopener">Visit Website</a>
-            <a class="pill-btn" href="mailto:hello@abhishekr5.dev">Send Email</a>
-          </div>
-        </div><!-- /dock -->
+        <!-- compact Dynamic-Island pill — the capsule's final condensed form.
+             It lives inside the same frame, so it inherits every scrubbed
+             transform; its sizes are authored "rendered px × var(--u)". -->
+        <button class="pill" id="pill" type="button"
+                aria-label="Connect with us — show contact options"
+                aria-expanded="false" aria-controls="panel"></button>
 
       </div><!-- /frame -->
 
@@ -116,11 +98,35 @@
       <p class="stage-note" id="stageNote">tap a channel to say hello</p>
 
     </div><!-- /pinner -->
+
+    <!-- expanded contact panel — grows from the compact pill on tap -->
+    <div class="panel" id="panel" aria-hidden="true">
+      <p class="pan-head"><i class="cdot" aria-hidden="true"></i>Connect with&nbsp;us</p>
+      <div class="pan-rows" role="group" aria-label="Social channels">
+        <button class="pan-row" data-app="Instagram">
+          <span class="pan-ico" style="--c1:#e1306c;--c2:#833ab4" aria-hidden="true">&#128247;</span>Instagram
+        </button>
+        <button class="pan-row" data-app="Facebook">
+          <span class="pan-ico" style="--c1:#1877f2;--c2:#0a4fc0" aria-hidden="true">&#128077;</span>Facebook
+        </button>
+        <button class="pan-row" data-app="WhatsApp">
+          <span class="pan-ico" style="--c1:#25d366;--c2:#0b8a3c" aria-hidden="true">&#128172;</span>WhatsApp
+        </button>
+        <button class="pan-row" data-app="LinkedIn">
+          <span class="pan-ico" style="--c1:#0a66c2;--c2:#004182" aria-hidden="true">&#128188;</span>LinkedIn
+        </button>
+      </div>
+      <div class="pan-actions">
+        <a class="pill-btn" href="https://abhishekr5.github.io/web/" target="_blank" rel="noopener">Visit Website</a>
+        <a class="pill-btn" href="mailto:hello@abhishekr5.dev">Send Email</a>
+      </div>
+    </div><!-- /panel -->
+
   </div><!-- /hero -->
 
 </main>
 
-<!-- notification toasts (fixed — usable in hero and docked states) -->
+<!-- notification toasts (fixed — usable in hero, docked and panel states) -->
 <div class="banners" id="banners" aria-live="polite"></div>
 
 <script src="island.js"></script>

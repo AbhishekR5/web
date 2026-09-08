@@ -4,8 +4,10 @@
 
    SCROLL FLIGHT: the giant capsule is ONE object. While the page
    scrolls, its sticky wrapper stays in view and the whole frame is
-   scrubbed (GPU translate3d + scale) from the centered hero pose to
-   a compact floating Dynamic Island at the top-right.
+   scrubbed (GPU translate3d + scale) from the centered hero pose up
+   to a compact Dynamic-Island pill at TOP CENTER. The interior
+   content fades as it condenses; tapping the pill expands the
+   contact panel. Scrolling up reverses everything.
    ============================================================ */
 
 :root{
@@ -18,9 +20,9 @@
   --orange:#ff9f0a;
   --ease:cubic-bezier(.32,.72,0,1);
   --spring:cubic-bezier(.2,.9,.25,1.2);
-  --u:1;                     /* un-scale factor for docked UI, set by JS */
-  --safe-top:env(safe-area-inset-top, 0px);
-  --safe-right:env(safe-area-inset-right, 0px);
+  --u:1;                 /* un-scale factor for the pill, set by JS */
+  --sit:18px;            /* top inset (px) for the docked island, set by JS */
+  --sph:44px;            /* docked pill rendered height (px), set by JS */
 }
 
 *{box-sizing:border-box;margin:0;padding:0}
@@ -61,12 +63,12 @@ a{color:inherit}
 .hero.rm{height:100vh}
 
 .pinner{
-  position:sticky;top:0;
+  position:sticky;top:0;z-index:30;
   height:100vh;
   height:100svh;
   display:flex;flex-direction:column;
   align-items:center;justify-content:center;
-  padding:calc(12px + var(--safe-top)) 12px calc(20px + env(safe-area-inset-bottom,0px));
+  padding:calc(12px + env(safe-area-inset-top,0px)) 12px calc(20px + env(safe-area-inset-bottom,0px));
   box-sizing:border-box;
   transform:translateZ(0);
   animation:riseIn 1.1s var(--spring) .1s both;
@@ -84,33 +86,6 @@ html.ready .pinner{animation:none}
   will-change:transform;
 }
 
-/* glass fill — visible only once the capsule is compact */
-.dglass{
-  position:absolute;inset:0;border-radius:50%;
-  background:
-    radial-gradient(120% 90% at 50% 118%, rgba(48,209,88,.30) 0%, rgba(48,209,88,.10) 40%, transparent 70%),
-    radial-gradient(80% 40% at 50% -6%, rgba(140,255,200,.10) 0%, transparent 60%),
-    linear-gradient(180deg,rgba(9,26,16,.92),rgba(3,10,6,.88) 55%,rgba(5,16,10,.94));
-  box-shadow:
-    0 0 calc(120px * var(--u)) calc(-14px * var(--u)) rgba(48,209,88,.45),
-    0 calc(30px * var(--u)) calc(70px * var(--u)) calc(-20px * var(--u)) rgba(0,0,0,.9),
-    inset 0 0 0 calc(.5px * var(--u)) rgba(255,255,255,.06),
-    inset 0 0 calc(46px * var(--u)) rgba(48,209,88,.10);
-  border:calc(1.1px * var(--u)) solid rgba(130,255,190,.38);
-  opacity:0;
-  transition:opacity .42s ease,box-shadow .35s ease,border-color .3s ease,backdrop-filter .42s ease;
-}
-body.is-docked .dglass{
-  backdrop-filter:blur(18px) saturate(1.25);
-  -webkit-backdrop-filter:blur(18px) saturate(1.25);
-}
-.dglass::before{ /* inner top sheen */
-  content:"";position:absolute;left:12%;right:12%;top:6%;height:calc(10px * var(--u));
-  border-radius:999px;
-  background:linear-gradient(90deg,transparent,rgba(170,255,215,.32),transparent);
-  filter:blur(calc(1.5px * var(--u)));opacity:.9;
-}
-
 /* ============================================================
    GIANT EMERALD CAPSULE (hero rim)
    ============================================================ */
@@ -118,22 +93,23 @@ body.is-docked .dglass{
   position:absolute;inset:0;border-radius:50%;
   border:1.4px solid rgba(125,255,185,.28);
   box-shadow:0 0 120px -18px rgba(48,209,88,.2), inset 0 0 150px rgba(48,209,88,.05);
-  transition:opacity .35s ease,border-color .4s ease;
+  transition:opacity .38s ease;
 }
 .capsule::before{
   content:"";position:absolute;inset:-1.5px;border-radius:inherit;
   border:2px solid rgba(110,255,175,.35);filter:blur(10px);opacity:.7;
-  transition:opacity .35s ease;
+  transition:opacity .38s ease;
 }
 .capsule::after{
   content:"";position:absolute;inset:0;border-radius:inherit;
   background:radial-gradient(120% 42% at 50% 104%, rgba(48,209,88,.14) 0%, transparent 60%),
              radial-gradient(90% 30% at 50% -4%, rgba(150,255,205,.08) 0%, transparent 60%);
-  transition:opacity .35s ease;
+  transition:opacity .38s ease;
 }
 
 /* thin glow bars near the top & bottom inner edges */
-.edge-bar{position:absolute;left:17.6%;width:64.8%;pointer-events:none;border-radius:999px;z-index:1}
+.edge-bar{position:absolute;left:17.6%;width:64.8%;pointer-events:none;border-radius:999px;z-index:1;
+  transition:opacity .38s ease}
 .edge-bar--top{top:8.8%;height:9px;
   background:linear-gradient(90deg,transparent,rgba(48,209,88,.85) 18%,rgba(48,209,88,.85) 82%,transparent);
   box-shadow:0 0 18px rgba(48,209,88,.5)}
@@ -142,12 +118,11 @@ body.is-docked .dglass{
   box-shadow:0 0 26px rgba(48,209,88,.6)}
 .edge-bar::after{content:"";position:absolute;left:18%;right:18%;top:50%;transform:translateY(-50%);
   height:3px;border-radius:999px;background:#c6ffe0;filter:blur(1px);opacity:.85}
-.edge-bar{transition:opacity .35s ease}
 
 /* specular glints on the rim */
 .glint{position:absolute;z-index:3;border-radius:50%;pointer-events:none;
   background:radial-gradient(circle,rgba(190,255,220,.95),rgba(190,255,220,0) 70%);filter:blur(1px);
-  transition:opacity .35s ease}
+  transition:opacity .38s ease}
 .g1{width:9px;height:9px;left:9.5%;top:5.5%;opacity:.9}
 .g2{width:7px;height:7px;left:89.6%;top:21%;opacity:.8}
 .g3{width:10px;height:10px;left:7.2%;bottom:22%;opacity:.65}
@@ -164,7 +139,7 @@ body.is-docked .dglass{
   position:absolute;left:0;right:0;top:15%;
   text-align:center;font-size:clamp(21px,2.1vw,30px);font-weight:700;letter-spacing:.02em;
   color:rgba(245,255,250,.96);text-shadow:0 0 30px rgba(48,209,88,.25);
-  transition:opacity .3s ease,transform .34s var(--spring),visibility 0s linear .3s;
+  transition:opacity .3s ease,transform .38s var(--spring),visibility 0s linear .32s;
 }
 .title::before,.title::after{
   content:"";display:inline-block;width:7px;height:7px;border-radius:50%;
@@ -189,7 +164,7 @@ body.is-docked .dglass{
 .tiles{
   position:absolute;left:0;right:0;top:36.5%;
   display:flex;align-items:flex-start;justify-content:center;gap:clamp(30px,6.4vw,104px);
-  transition:opacity .3s ease,transform .34s var(--spring),visibility 0s linear .3s;
+  transition:opacity .3s ease,transform .38s var(--spring),visibility 0s linear .32s;
 }
 .tile{display:flex;flex-direction:column;align-items:center;gap:10px;padding:4px 2px;border-radius:18px;transition:transform .2s}
 .tile:active{transform:scale(.92)}
@@ -214,7 +189,7 @@ body.is-docked .dglass{
 .actions{
   position:absolute;left:0;right:0;top:65%;
   display:flex;justify-content:center;gap:clamp(16px,3vw,44px);
-  transition:opacity .3s ease,transform .34s var(--spring),visibility 0s linear .3s;
+  transition:opacity .3s ease,transform .38s var(--spring),visibility 0s linear .32s;
 }
 .pill-btn{
   text-decoration:none;font-size:clamp(13px,1.15vw,17px);font-weight:600;letter-spacing:.03em;
@@ -228,147 +203,176 @@ body.is-docked .dglass{
 .pill-btn:active{transform:scale(.97)}
 
 /* ============================================================
-   DOCKED STATE — the whole capsule has become a compact floating
-   Dynamic Island at the top-right. Hero decor fades; the compact
-   glass + tight emerald glow + the compact UI crossfade in.
-   All compact sizes are written as  "desired-rendered-px * var(--u)"
-   so they stay crisp inside the scaled-down frame.
+   FLIGHT STATE — once the capsule is small enough, its interior
+   content fades out (staggered); the rim follows; finally the
+   capsule IS a compact Dynamic-Island pill at top center.
    ============================================================ */
 
-/* hide the hero internals once the capsule is mid-flight and compact.
-   (is-min covers the travelling band where the object is too small for
-   the hero content; is-docked shows the compact UI instead) */
-body.is-docked .scene .title,
+/* hero interior content leaves progressively while travelling */
 body.is-min .scene .title,
-body.is-docked .scene .tiles,
+body.is-min .scene .island,
 body.is-min .scene .tiles,
-body.is-docked .scene .actions,
-body.is-min .scene .actions{opacity:0;transform:scale(.9);visibility:hidden;pointer-events:none}
-body.is-docked .scene .island,
-body.is-min .scene .island{opacity:0;transform:translateX(-50%) scale(.35);visibility:hidden;pointer-events:none;
-  transition:opacity .26s ease .06s,transform .3s var(--spring) .06s,visibility 0s linear .28s}
+body.is-min .scene .actions{opacity:0;visibility:hidden;pointer-events:none}
+body.is-min .scene .title{transform:translateY(-26px) scale(.94)}
+body.is-min .scene .island{transform:translateX(-50%) translateY(-14px) scale(.8)}
+body.is-min .scene .tiles{transform:scale(.85)}
+body.is-min .scene .actions{transform:scale(.9)}
+body.is-min .scene .title{transition:opacity .3s ease .02s,transform .4s var(--spring) .02s,visibility 0s linear .32s}
+body.is-min .scene .island{transition:opacity .3s ease .08s,transform .42s var(--spring) .08s,visibility 0s linear .38s}
+body.is-min .scene .tiles{transition:opacity .3s ease .14s,transform .44s var(--spring) .14s,visibility 0s linear .44s}
+body.is-min .scene .actions{transition:opacity .3s ease .2s,transform .46s var(--spring) .2s,visibility 0s linear .5s}
+
+/* the decorative rim condenses into the pill */
 body.is-docked .capsule,
 body.is-docked .capsule::before,
-body.is-docked .capsule::after{opacity:0;border-color:transparent}
+body.is-docked .capsule::after,
 body.is-docked .edge-bar,
 body.is-docked .glint{opacity:0}
 
-body.is-docked .dglass{opacity:1}
-
-/* compact UI wrapper (invisible until docked) */
-.dock{
-  position:absolute;inset:0;z-index:6;
+/* ------------------------------------------------------------------
+   COMPACT DYNAMIC-ISLAND PILL
+   A child of the frame: it inherits every scrubbed transform, so it
+   can never detach or "jump". Its CSS px are scaled by --u so that,
+   at the frame's final scale, it renders at the intended pill size.
+   ------------------------------------------------------------------ */
+.pill{
+  position:absolute;left:0;right:0;top:50%;z-index:5;
+  height:calc(var(--sph) * var(--u));
+  margin:0 auto;
+  transform:translateY(-50%) scale(.88);
+  border-radius:999px;
+  background:
+    radial-gradient(60% 130% at 50% 50%, rgba(48,209,88,.12), transparent 78%),
+    linear-gradient(180deg,rgba(14,34,22,.92),rgba(2,7,4,.97));
+  border:calc(1px * var(--u)) solid rgba(125,255,185,.42);
+  box-shadow:
+    0 0 calc(32px * var(--u)) rgba(48,209,88,.42),
+    0 calc(10px * var(--u)) calc(26px * var(--u)) rgba(0,0,0,.6),
+    inset 0 0 calc(14px * var(--u)) rgba(48,209,88,.14),
+    inset 0 calc(1px * var(--u)) 0 rgba(255,255,255,.14);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
   opacity:0;visibility:hidden;pointer-events:none;
-  transition:opacity .36s ease .1s,visibility 0s linear .42s;
-}
-body.is-docked .dock{opacity:1;visibility:visible;pointer-events:auto;
-  transition:opacity .3s ease .1s,visibility 0s}
-body.is-docked .dock:focus-within{opacity:1;visibility:visible;pointer-events:auto}
-
-/* ---- compact "Connect with us" header ---- */
-.pop-head{
-  position:absolute;top:14%;left:0;right:0;
-  display:flex;align-items:center;justify-content:center;gap:calc(7px * var(--u));
-  font-size:calc(11px * var(--u));font-weight:700;letter-spacing:.2em;text-indent:.2em;
-  text-transform:uppercase;color:rgba(240,255,248,.95);white-space:nowrap;
-  opacity:0;transform:scale(.9);
-  transition:opacity .3s ease .14s,transform .34s var(--spring) .14s;
-}
-body.is-docked .pop-head{opacity:1;transform:scale(1)}
-.pop-head .cdot{
-  width:calc(6px * var(--u));height:calc(6px * var(--u));border-radius:50%;flex:none;
-  background:var(--green);box-shadow:0 0 calc(10px * var(--u)) var(--green);
-  animation:blink 2.4s ease-in-out infinite;
-}
-
-/* ---- compact social row chips (flex-wraps 2×2, or 1 column on very
-   narrow screens where two chips would outgrow the glass) ---- */
-.pop-body{
-  position:absolute;left:50%;top:30%;
-  display:flex;flex-wrap:wrap;justify-content:center;
-  gap:calc(7px * var(--u)) calc(8px * var(--u));
-  transform:translateX(-50%) scale(.92);
-  opacity:0;
-  transition:opacity .3s ease .18s,transform .34s var(--spring) .18s;
-}
-body.is-docked .pop-body{opacity:1;transform:translateX(-50%) scale(1)}
-.pop-row{
-  display:flex;align-items:center;justify-content:center;gap:calc(6px * var(--u));
-  font-size:calc(10.5px * var(--u));font-weight:600;letter-spacing:.02em;
-  color:rgba(230,255,242,.92);white-space:nowrap;
-  padding:calc(6.5px * var(--u)) calc(12px * var(--u));border-radius:999px;
-  background:linear-gradient(165deg,rgba(255,255,255,.10),rgba(255,255,255,.03));
-  border:calc(1px * var(--u)) solid rgba(150,255,200,.20);
-  box-shadow:inset 0 calc(1px * var(--u)) 0 rgba(255,255,255,.10),0 calc(8px * var(--u)) calc(18px * var(--u)) calc(-10px * var(--u)) rgba(0,0,0,.85);
-  transition:border-color .25s,box-shadow .3s,transform .18s,background .25s;
+  transition:opacity .34s ease .04s,transform .42s var(--spring) .04s,
+             box-shadow .3s ease,border-color .3s ease,visibility 0s linear .38s;
   -webkit-tap-highlight-color:transparent;
 }
-.pop-row:hover{border-color:rgba(48,209,88,.65);background:linear-gradient(165deg,rgba(48,209,88,.14),rgba(48,209,88,.05));
-  box-shadow:0 0 calc(18px * var(--u)) calc(-6px * var(--u)) rgba(48,209,88,.6),inset 0 calc(1px * var(--u)) 0 rgba(255,255,255,.12)}
-.pop-row:active{transform:scale(.95)}
-.pop-row[aria-pressed="true"]{
-  border-color:rgba(48,209,88,.9);color:#d8ffe9;
-  box-shadow:0 0 calc(20px * var(--u)) calc(-4px * var(--u)) rgba(48,209,88,.75),inset 0 0 calc(10px * var(--u)) rgba(48,209,88,.12);
+body.is-docked .pill{
+  opacity:1;visibility:visible;pointer-events:auto;
+  transform:translateY(-50%) scale(1);
+  transition:opacity .3s ease .05s,transform .44s var(--spring) .05s,visibility 0s;
 }
-.pop-ico{
-  width:calc(15px * var(--u));height:calc(15px * var(--u));flex:none;
-  display:grid;place-items:center;font-size:calc(9px * var(--u));line-height:1;
-  border-radius:50%;color:#fff;
-  background:linear-gradient(160deg,var(--c1,#30d158),var(--c2,#0b8a3c));
+/* generous touch target around the small pill */
+.pill::before{
+  content:"";position:absolute;inset:calc(-6px * var(--u));
+  border-radius:inherit;
 }
+/* the emerald indicator dot */
+.pill::after{
+  content:"";position:absolute;left:50%;top:50%;
+  width:calc(8px * var(--u));height:calc(8px * var(--u));
+  margin:calc(-4px * var(--u)) 0 0 calc(-4px * var(--u));
+  border-radius:50%;
+  background:radial-gradient(circle at 35% 32%, #a2f7c2, #0f9d4b 58%, #0a5c2e);
+  box-shadow:0 0 calc(9px * var(--u)) rgba(48,209,88,.95),0 0 calc(20px * var(--u)) rgba(48,209,88,.32);
+  animation:diPulse 3.4s ease-in-out infinite;
+}
+@keyframes diPulse{0%,100%{opacity:.68;box-shadow:0 0 calc(6px * var(--u)) rgba(48,209,88,.7),0 0 calc(14px * var(--u)) rgba(48,209,88,.2)}
+  50%{opacity:1;box-shadow:0 0 calc(10px * var(--u)) rgba(48,209,88,1),0 0 calc(22px * var(--u)) rgba(48,209,88,.4)}}
 
-/* ---- compact Visit Website / Send Email row ---- */
-.pop-actions{
-  position:absolute;left:0;right:0;top:62%;
-  display:flex;justify-content:center;gap:calc(10px * var(--u));
-  opacity:0;transform:scale(.92);
-  transition:opacity .3s ease .22s,transform .34s var(--spring) .22s;
-}
-body.is-docked .pop-actions{opacity:1;transform:scale(1)}
-body.is-docked .pop-actions .pill-btn{
-  font-size:calc(11px * var(--u));padding:calc(8px * var(--u)) calc(15px * var(--u));white-space:nowrap;
-  border:calc(1px * var(--u)) solid rgba(150,255,200,.22);
-}
-
-/* ---- floating ground shadow under the compact island ---- */
-.dglass::after{
-  content:"";position:absolute;left:12%;right:12%;bottom:-7%;
-  height:calc(12px * var(--u));border-radius:50%;
-  background:radial-gradient(50% 50% at 50% 50%,rgba(0,0,0,.55),transparent 72%);
-  filter:blur(calc(2.5px * var(--u)));
-  opacity:0;transition:opacity .3s ease;
-}
-body.is-docked .dglass::after{opacity:1}
 @media (hover:hover){
-  /* hover / press cues raise the emerald glow of the compact island —
-     the scrubbed outer frame transform is never touched by CSS */
-  body.is-docked .frame:hover .dglass{
-    box-shadow:
-      0 0 calc(150px * var(--u)) calc(-10px * var(--u)) rgba(48,209,88,.68),
-      0 calc(30px * var(--u)) calc(70px * var(--u)) calc(-20px * var(--u)) rgba(0,0,0,.9),
-      inset 0 0 0 calc(.5px * var(--u)) rgba(255,255,255,.1),
-      inset 0 0 calc(54px * var(--u)) rgba(48,209,88,.18);
+  body.is-docked .pill:hover{
     border-color:rgba(150,255,210,.6);
-  }
-  body.is-docked .frame:active .dglass{
     box-shadow:
-      0 0 calc(120px * var(--u)) calc(-10px * var(--u)) rgba(48,209,88,.55),
-      0 calc(18px * var(--u)) calc(50px * var(--u)) calc(-18px * var(--u)) rgba(0,0,0,.9),
-      inset 0 0 0 calc(1px * var(--u)) rgba(160,255,215,.7),
-      inset 0 0 calc(44px * var(--u)) rgba(48,209,88,.2);
-    border-color:rgba(170,255,220,.75);
+      0 0 calc(46px * var(--u)) rgba(48,209,88,.6),
+      0 calc(12px * var(--u)) calc(28px * var(--u)) rgba(0,0,0,.65),
+      inset 0 0 calc(16px * var(--u)) rgba(48,209,88,.2),
+      inset 0 calc(1px * var(--u)) 0 rgba(255,255,255,.18);
   }
-  body.is-docked .frame:hover .dglass::after{opacity:1}
 }
-/* focus inside the compact island keeps it clearly visible */
-body.is-docked .frame:focus-within .dglass{
-  box-shadow:
-    0 0 calc(150px * var(--u)) calc(-10px * var(--u)) rgba(48,209,88,.55),
-    0 calc(30px * var(--u)) calc(70px * var(--u)) calc(-20px * var(--u)) rgba(0,0,0,.9),
-    inset 0 0 0 calc(1px * var(--u)) rgba(140,255,195,.6),
-    inset 0 0 calc(46px * var(--u)) rgba(48,209,88,.12);
+body.is-docked .pill:active{transform:translateY(-50%) scale(.96)}
+body.is-docked .pill:focus-visible{
+  outline-color:var(--acc);
+  outline-width:calc(2px * var(--u));
+  outline-offset:calc(3px * var(--u));
 }
-body.is-docked .frame :focus-visible{outline-width:calc(2px * var(--u));outline-offset:calc(2px * var(--u))}
+
+/* ============================================================
+   EXPANDED CONTACT PANEL — grows from the compact pill on tap.
+   Fixed top-center, natural px, transform/opacity transition only.
+   ============================================================ */
+.panel{
+  position:fixed;left:50%;
+  top:calc(var(--sit) + var(--sph) + 14px);
+  width:min(440px,calc(100vw - 28px));
+  z-index:260;
+  transform:translate(-50%,-10px) scale(.94);
+  transform-origin:top center;
+  opacity:0;visibility:hidden;pointer-events:none;
+  max-height:calc(100vh - var(--sit) - var(--sph) - 34px);
+  max-height:calc(100dvh - var(--sit) - var(--sph) - 34px);
+  overflow-y:auto;
+  border-radius:26px;
+  padding:16px 16px 14px;
+  background:
+    radial-gradient(110% 60% at 50% -10%, rgba(48,209,88,.12), transparent 55%),
+    linear-gradient(180deg,rgba(10,28,17,.94),rgba(3,10,6,.96));
+  border:1px solid rgba(125,255,185,.3);
+  box-shadow:0 0 0 1px rgba(255,255,255,.04),
+             0 30px 80px -18px rgba(0,0,0,.9),
+             0 0 70px -20px rgba(48,209,88,.45),
+             inset 0 1px 0 rgba(255,255,255,.09);
+  backdrop-filter:blur(22px) saturate(1.2);
+  -webkit-backdrop-filter:blur(22px) saturate(1.2);
+  transition:opacity .26s ease,transform .34s var(--spring),visibility 0s linear .32s;
+}
+body.is-open .panel{
+  opacity:1;visibility:visible;pointer-events:auto;
+  transform:translate(-50%,0) scale(1);
+  transition:opacity .22s ease,transform .3s var(--spring),visibility 0s;
+}
+.pan-head{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  font-size:12.5px;font-weight:700;letter-spacing:.18em;text-indent:.18em;
+  text-transform:uppercase;color:rgba(240,255,248,.95);
+  margin:2px 0 10px;white-space:nowrap;
+}
+.pan-head .cdot{
+  width:6px;height:6px;border-radius:50%;flex:none;
+  background:var(--green);box-shadow:0 0 10px var(--green);
+  animation:blink 2.4s ease-in-out infinite;
+}
+.pan-rows{display:flex;flex-direction:column;gap:6px}
+.pan-row{
+  display:flex;align-items:center;gap:12px;width:100%;text-align:left;
+  padding:9px 10px;border-radius:14px;
+  font-size:15px;font-weight:600;color:rgba(235,255,244,.94);
+  border:1px solid transparent;
+  transition:border-color .25s,background .25s,box-shadow .3s;
+  -webkit-tap-highlight-color:transparent;
+}
+.pan-row:hover{
+  background:linear-gradient(165deg,rgba(48,209,88,.14),rgba(48,209,88,.04));
+  border-color:rgba(48,209,88,.35);
+}
+.pan-row:active{transform:scale(.985)}
+.pan-row[aria-pressed="true"]{
+  background:linear-gradient(165deg,rgba(48,209,88,.16),rgba(48,209,88,.05));
+  border-color:rgba(48,209,88,.6);
+  box-shadow:0 0 22px -6px rgba(48,209,88,.6);
+}
+.pan-ico{
+  width:34px;height:34px;border-radius:10px;flex:none;
+  display:grid;place-items:center;font-size:17px;color:#fff;
+  background:linear-gradient(160deg,var(--c1,#30d158),var(--c2,#0b8a3c));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 8px 18px -8px rgba(0,0,0,.75);
+}
+.pan-actions{display:flex;justify-content:center;gap:10px;margin-top:12px}
+.pan-actions .pill-btn{font-size:13.5px;padding:9px 18px;white-space:nowrap}
+@media (max-width:380px){
+  .panel{width:calc(100vw - 20px);padding:13px 12px 12px}
+  .pan-actions .pill-btn{font-size:12.5px;padding:8px 13px}
+}
 
 /* ============================================================
    STAGE NOTE (hint under the capsule)
@@ -380,7 +384,7 @@ body.is-docked .frame :focus-visible{outline-width:calc(2px * var(--u));outline-
   transition:color .3s,opacity .3s ease;
 }
 .stage-note.hot{color:#8fffc0}
-body.is-docked .stage-note{opacity:.55}
+body.is-docked .stage-note{opacity:.5}
 
 /* ============================================================
    NOTIFICATION TOASTS (fixed overlay — never a second capsule)
@@ -391,9 +395,9 @@ body.is-docked .stage-note{opacity:.55}
   pointer-events:none;
 }
 @media (max-width:680px){.banners{top:calc(24% + 46px)}}
-/* when the capsule is docked top-right, toasts move to the bottom so
-   they never cover the compact island */
-body.is-docked .banners{top:auto;bottom:calc(26px + env(safe-area-inset-bottom, 0px))}
+/* when the panel is expanded, toasts drop to the bottom so they never
+   cover the contact options */
+body.is-open .banners{top:auto;bottom:calc(26px + env(safe-area-inset-bottom, 0px))}
 .banners .banner{pointer-events:auto}
 .banner{
   display:flex;align-items:center;gap:10px;background:rgba(245,247,250,.96);color:#16181d;
@@ -424,7 +428,7 @@ body.is-docked .banners{top:auto;bottom:calc(26px + env(safe-area-inset-bottom, 
              0 0 34px -6px rgba(48,209,88,.55),
              inset 0 0 10px rgba(48,209,88,.22);
   cursor:pointer;user-select:none;
-  transition:box-shadow .35s ease;
+  transition:box-shadow .35s ease,opacity .3s ease,transform .4s var(--spring),visibility 0s linear .32s;
 }
 .scene .island:hover{box-shadow:0 0 0 1px rgba(255,255,255,.07),
   0 0 46px -4px rgba(48,209,88,.8),inset 0 0 12px rgba(48,209,88,.3)}
@@ -451,17 +455,6 @@ body.is-docked .banners{top:auto;bottom:calc(26px + env(safe-area-inset-bottom, 
   .scene .island{top:24%}
   .actions{top:63%}
   .title{top:17%}
-}
-/* very narrow phones: four stacked compact chips need room,
-   so the compact rows sit higher and the actions sit lower */
-@media (max-width:359px){
-  .pop-row{font-size:calc(9px * var(--u));padding:calc(5.5px * var(--u)) calc(10px * var(--u));
-    gap:calc(5px * var(--u))}
-  .pop-ico{width:calc(13px * var(--u));height:calc(13px * var(--u));font-size:calc(8px * var(--u))}
-  .pop-head{top:11%;font-size:calc(10px * var(--u))}
-  .pop-body{top:25%;gap:calc(6px * var(--u)) calc(7px * var(--u))}
-  .pop-actions{top:66%}
-  body.is-docked .pop-actions .pill-btn{font-size:calc(10px * var(--u));padding:calc(7px * var(--u)) calc(12px * var(--u))}
 }
 @media (max-height:620px){.stage-note{display:none}}
 
