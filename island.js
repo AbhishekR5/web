@@ -100,21 +100,21 @@ if (island){
   });
 }
 
-/* ---------- sticky top-middle on scroll ----------
-   As soon as the user scrolls down, the island detaches from the
-   scene and pins to the top-center of the viewport; it slides back
-   into its original spot when the user returns to the top. */
+/* ---------- scroll UI: island pins top-center, title minimizes to the
+   top-right corner once the user scrolls; both restore at the top ---------- */
 let pinned = false;
 
-function onScroll(){
-  if (!island) return;
+function setScrollUI(on){
+  document.body.classList.toggle("is-scrolled", on);
+  if (island) island.classList.toggle("is-pinned", on);
+  pinned = on;
+}
 
+function onScroll(){
   if (!pinned && window.scrollY > 12){
-    island.classList.add("is-pinned");
-    pinned = true;
+    setScrollUI(true);
   } else if (pinned && window.scrollY <= 4){
-    island.classList.remove("is-pinned");
-    pinned = false;
+    setScrollUI(false);
   }
 }
 

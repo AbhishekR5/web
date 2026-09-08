@@ -97,7 +97,10 @@ a{color:inherit}
   position:absolute;left:0;right:0;top:15%;
   text-align:center;font-size:clamp(21px,2.1vw,30px);font-weight:700;letter-spacing:.02em;
   color:rgba(245,255,250,.96);text-shadow:0 0 30px rgba(48,209,88,.25);
+  transition:opacity .38s ease,transform .38s var(--spring),visibility 0s linear .38s;
 }
+/* minimized → fade the big title away while scrolled */
+body.is-scrolled .title{opacity:0;transform:scale(.85);visibility:hidden}
 .title::before,.title::after{
   content:"";display:inline-block;width:7px;height:7px;border-radius:50%;
   background:var(--green);box-shadow:0 0 10px var(--green);
@@ -105,6 +108,33 @@ a{color:inherit}
   animation:blink 2.4s ease-in-out infinite;
 }
 .title::after{animation-delay:1.2s}
+
+/* ---- minimized "Connect with us" chip, top-right corner (scrolled only) ---- */
+.title-chip{
+  position:fixed;top:14px;right:clamp(14px,2vw,26px);margin:0;z-index:119;
+  display:inline-flex;align-items:center;gap:9px;
+  font-size:clamp(11px,1.05vw,13.5px);font-weight:700;letter-spacing:.16em;
+  text-transform:uppercase;text-indent:.16em;
+  color:rgba(240,255,248,.95);white-space:nowrap;
+  padding:9px 16px;border-radius:999px;
+  background:linear-gradient(165deg,rgba(10,40,26,.72),rgba(4,16,10,.78));
+  border:1px solid rgba(120,255,185,.35);
+  box-shadow:0 10px 30px -8px rgba(0,0,0,.7),0 0 22px -6px rgba(48,209,88,.5),
+             inset 0 1px 0 rgba(255,255,255,.1);
+  backdrop-filter:blur(10px);
+  opacity:0;visibility:hidden;transform:translateY(-10px) scale(.92);
+  pointer-events:none;
+  transition:opacity .38s ease,transform .38s var(--spring),visibility 0s linear .38s;
+}
+.title-chip .cdot{width:6px;height:6px;border-radius:50%;background:var(--green);
+  box-shadow:0 0 10px var(--green);animation:blink 2.4s ease-in-out infinite;margin:0}
+body.is-scrolled .title-chip{
+  opacity:1;visibility:visible;transform:translateY(0) scale(1);pointer-events:auto;
+  transition:opacity .38s ease .05s,transform .38s var(--spring) .05s,visibility 0s;
+}
+@media (max-width:560px){
+  .title-chip{top:14px;right:12px;font-size:10px;letter-spacing:.08em;padding:7px 11px;gap:6px}
+}
 
 /* ---- interactive island (hero) ---- */
 .scene .island{
