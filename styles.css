@@ -131,16 +131,6 @@ html.ready .pinner{animation:none}
 .edge-bar::after{content:"";position:absolute;left:22%;right:22%;top:50%;transform:translateY(-50%);
   height:2px;border-radius:999px;background:#c6ffe0;filter:blur(.5px);opacity:.8}
 
-/* specular glints on the rim */
-.glint{position:absolute;z-index:3;border-radius:50%;pointer-events:none;
-  background:radial-gradient(circle,rgba(190,255,220,.95),rgba(190,255,220,0) 70%);filter:blur(1px);
-  transition:opacity .4s ease}
-.g1{width:8px;height:8px;left:8%;top:16%;opacity:.9}
-.g2{width:6px;height:6px;left:91%;top:30%;opacity:.8}
-.g3{width:9px;height:9px;left:5%;bottom:18%;opacity:.6}
-.g4{width:5px;height:5px;left:90%;bottom:24%;opacity:.55}
-.g5{width:5px;height:5px;left:50%;top:5%;opacity:.7}
-
 /* ---- hero interior (brand + dot) ---- */
 .scene{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;
   align-items:center;justify-content:center;gap:2px;text-align:center;overflow:hidden}
@@ -221,6 +211,61 @@ body.is-docked .pill{
 body.is-docked .pill:active{transform:translate(-50%,-50%) scale(.96)}
 
 /* ============================================================
+   CHANNEL ICON ROW — appears under the capsule as scrolling
+   begins (anchored to the frame's bottom edge, counter-scaled
+   by island.js so icons stay a constant full touch size)
+   ============================================================ */
+#chanRow{
+  position:absolute;left:50%;top:100%;width:0;height:0;
+  z-index:5;pointer-events:none;
+}
+#chanRow.pinned{position:fixed;left:0;top:0;z-index:320}
+#rowIn{
+  position:absolute;left:0;top:0;
+  display:flex;align-items:center;gap:14px;
+  transform-origin:top center;
+  will-change:transform,opacity;
+  visibility:hidden;
+  transition:opacity .22s ease;
+}
+.chan-ico{
+  position:relative;
+  width:56px;height:56px;border-radius:50%;flex:none;
+  display:grid;place-items:center;color:#fff;
+  border:1px solid rgba(255,255,255,.38);
+  box-shadow:
+    inset 0 2px 2px rgba(255,255,255,.5),
+    inset 0 -7px 14px rgba(0,0,0,.3),
+    0 12px 26px -10px rgba(0,0,0,.85),
+    0 0 30px -8px rgba(48,209,88,.35);
+  transition:transform .22s var(--spring),border-color .25s,box-shadow .3s;
+  -webkit-tap-highlight-color:transparent;
+}
+.chan-ico::before{ /* soft top sheen */
+  content:"";position:absolute;left:16%;top:7%;width:68%;height:44%;
+  border-radius:50%;pointer-events:none;filter:blur(.6px);
+  background:linear-gradient(180deg,rgba(255,255,255,.55),rgba(255,255,255,0) 80%);
+}
+.chan-ico svg{width:27px;height:27px;display:block;position:relative;z-index:1;
+  filter:drop-shadow(0 1px 1.5px rgba(0,0,0,.35))}
+.chan-ico--ig{background:linear-gradient(155deg,#feda75 0%,#fa7e1e 32%,#d62976 64%,#962fbf 96%)}
+.chan-ico--fb{background:linear-gradient(155deg,#4a9ff5 0%,#1877f2 55%,#0a4fc0 100%)}
+.chan-ico--wa{background:linear-gradient(155deg,#5cf29a 0%,#25d366 55%,#0b8a3c 100%)}
+.chan-ico--li{background:linear-gradient(155deg,#3b9ae8 0%,#0a66c2 55%,#004182 100%)}
+@media (hover:hover){
+  .chan-ico:hover{transform:translateY(-3px);border-color:rgba(255,255,255,.6);
+    box-shadow:inset 0 2px 2px rgba(255,255,255,.6),inset 0 -7px 14px rgba(0,0,0,.28),
+      0 16px 30px -10px rgba(0,0,0,.9),0 0 34px -6px rgba(48,209,88,.5)}
+}
+.chan-ico:active{transform:scale(.93)}
+.chan-ico[aria-pressed="true"]{
+  border-color:rgba(48,209,88,.9);
+  box-shadow:inset 0 2px 2px rgba(255,255,255,.5),inset 0 -7px 14px rgba(0,0,0,.3),
+    0 12px 26px -10px rgba(0,0,0,.85),0 0 0 2px rgba(48,209,88,.75),0 0 26px -4px rgba(48,209,88,.8);
+}
+#hero.rm #chanRow{display:none}
+
+/* ============================================================
    HERO COPY — scroll-scrubbed drift + fade (island.js)
    ============================================================ */
 .hero-head{
@@ -272,8 +317,7 @@ body.is-min .scene .island{opacity:0;transform:scale(.3);transition:opacity .26s
 body.is-docked .capsule,
 body.is-docked .capsule::before,
 body.is-docked .capsule::after,
-body.is-docked .edge-bar,
-body.is-docked .glint{opacity:0;box-shadow:none}
+body.is-docked .edge-bar{opacity:0;box-shadow:none}
 
 /* hero copy + hints out of the way once docked/pinned */
 body.is-docked .hero-head{opacity:0 !important}

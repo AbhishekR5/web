@@ -23,6 +23,8 @@ const noteEl   = $("#stageNote");
 const banners  = $("#banners");
 const frame    = $("#frame");
 const pill     = $("#pill");
+const chanRow  = $("#chanRow");
+const rowIn    = $("#rowIn");
 const panel    = $("#panel");
 const pinner   = $("#pinner");
 const hero     = $("#hero");
@@ -98,13 +100,21 @@ function sendNotification(app){
   while (banners.children.length > 3) banners.lastChild.remove();
 }
 
-/* ---------- connect panel rows (shared behavior) ---------- */
+/* ---------- connect panel rows + hero icon row (shared behavior) ---------- */
 function press(app){
-  document.querySelectorAll(".pan-row[data-app]").forEach(x =>
+  document.querySelectorAll(".pan-row[data-app], .chan-ico[data-app]").forEach(x =>
     x.setAttribute("aria-pressed", String(x.dataset.app === app)));
 }
 document.querySelectorAll(".pan-row[data-app]").forEach(t => {
   t.addEventListener("click", () => {
+    press(t.dataset.app);
+    sendNotification(t.dataset.app);
+  });
+});
+/* round channel icons under the capsule — same press as the panel rows */
+document.querySelectorAll(".chan-ico[data-app]").forEach(t => {
+  t.addEventListener("click", (ev) => {
+    ev.stopPropagation();            /* don't toggle the panel via the frame */
     press(t.dataset.app);
     sendNotification(t.dataset.app);
   });
@@ -131,6 +141,7 @@ function setOpen(on){
       pill.focus({ preventScroll: true });
     }
   }
+  requestScrub();               /* icon row fades out/in with the panel (rAF-batched) */
 }
 function frameClick(){
   if (docked) return;                 /* the pill handles the docked island */
@@ -218,6 +229,7 @@ function measure(){
   G.cy0 = pt + (ch - pt - pb) / 2;   /* pinner is stuck to viewport top:0 */
   G.cyD = top + ph / 2;
   G.F = Math.max(200, Math.round(vh * 1.2));   /* flight runway length */
+  G.chanY = G.cyD + (G.fh / 2) * G.sF + 12;    /* icon row: just under the docked island */
 
   frame.style.setProperty("--u", G.u.toFixed(3));
   root.style.setProperty("--sit", top + "px");
@@ -245,7 +257,9 @@ function applyCopy(p){
     headEl.style.opacity = (1 - kh).toFixed(3);
     headEl.style.transform = "translate3d(0," + (-Math.round(46 * kh)) + "px,0)";
   }
-  const ks = smooth(0.12, 0.58, p);
+  /* the scan cue hands off to the channel icon row: it starts fading the
+     moment scrolling begins so the two never sit on top of each other */
+  const ks = smooth(0, 0.34, p);
   if (scanEl){
     scanEl.style.opacity = (1 - ks).toFixed(3);
     scanEl.style.transform = "translate3d(0," + (-Math.round(20 * ks)) + "px,0)";
@@ -273,6 +287,27 @@ function applyPose(p){
     "translate3d(0px," + ty.toFixed(2) + "px,0) scale(" + s.toFixed(4) + ")";
 }
 
+/* channel icon row — anchored to the frame's bottom edge; the child is
+   counter-scaled (1/s) each frame so the icons render at a constant full
+   size (real touch targets) just under the capsule at every scroll depth.
+   While pinned it sits fixed under the island. Transform/opacity only. */
+function applyChanRow(p, op){
+  if (!chanRow || !rowIn) return;
+  op = clamp(op, 0, 1);
+  if (G.pinned){
+    rowIn.style.transform =
+      "translate3d(" + (G.vw / 2).toFixed(2) + "px," + (G.chanY || 0).toFixed(2) + "px,0) translateX(-50%)";
+  } else {
+    const cs = 1 / (poseAt(p).s || 1);
+    const gap = 12 + (1 - op) * 10;   /* small lift while fading in */
+    rowIn.style.transform =
+      "translateX(-50%) translateY(" + (gap * cs).toFixed(2) + "px) scale(" + cs.toFixed(4) + ")";
+  }
+  rowIn.style.opacity = op.toFixed(3);
+  rowIn.style.visibility = op > 0.01 ? "visible" : "hidden";
+}
+const rowOpAt = (p) => (open ? 0 : smooth(0.03, 0.14, p));
+
 /* ---------- seamless handoff to pinned (fixed) ---------- */
 function fixedPose(){
   /* center must sit at (vw/2, cyD) with the frame anchored left/top */
@@ -289,8 +324,13 @@ function enterPinned(){
   fixedPose();
   document.body.appendChild(frame);   /* fixed vs viewport — no paint between */
   frame.classList.add("pinned");
+  if (chanRow){
+    document.body.appendChild(chanRow);
+    chanRow.classList.add("pinned");
+  }
   setMin(true);
   setDocked(true);
+  applyChanRow(1, open ? 0 : 1);
 }
 
 function exitPinned(){
@@ -298,12 +338,17 @@ function exitPinned(){
   G.pinned = false;
   frame.classList.remove("pinned");
   pinner.appendChild(frame);          /* back in the flex flow (re-centered) */
+  if (chanRow){
+    pinner.appendChild(chanRow);
+    chanRow.classList.remove("pinned");
+  }
   body.classList.remove("is-pinned");
   const p = progress();
   setDocked(false);
   setMin(p >= 0.5);
   applyPose(p);
   applyCopy(p);
+  applyChanRow(p, rowOpAt(p));
 }
 
 function progress(){
@@ -315,13 +360,15 @@ function scrub(){
   const p = progress();
 
   if (G.pinned){
-    if (p <= 0.96) exitPinned();      /* scrolling back up — reverse seamlessly */
+    if (p <= 0.96){ exitPinned(); return; }   /* exitPinned() re-applies the row pose */
+    applyChanRow(p, open ? 0 : 1);
     return;
   }
   if (p >= 0.995){ enterPinned(); return; }
 
   applyPose(p);
   applyCopy(p);
+  applyChanRow(p, rowOpAt(p));
 
   /* state crossfades with hysteresis */
   if (p >= 0.70) setDocked(true);     /* pill replaces the rim */
@@ -345,7 +392,8 @@ function startEngine(){
   measure();
   const remeasure = () => {
     measure();
-    if (G.pinned) fixedPose(); else requestScrub();
+    if (G.pinned){ fixedPose(); applyChanRow(1, open ? 0 : 1); }
+    else requestScrub();
   };
   window.addEventListener("scroll", requestScrub, { passive: true });
   window.addEventListener("resize", remeasure, { passive: true });
@@ -373,6 +421,11 @@ function stopEngine(){
   if (headEl) headEl.style.opacity = headEl.style.transform = "";
   if (scanEl) scanEl.style.opacity = scanEl.style.transform = "";
   if (noteEl) noteEl.style.opacity = "";
+  if (chanRow){
+    chanRow.classList.remove("pinned");
+    pinner.appendChild(chanRow);
+    rowIn.style.transform = rowIn.style.opacity = rowIn.style.visibility = "";
+  }
 }
 
 function syncMotionPref(){

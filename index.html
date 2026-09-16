@@ -46,13 +46,6 @@
         <i class="edge-bar edge-bar--top" aria-hidden="true"></i>
         <i class="edge-bar edge-bar--bottom" aria-hidden="true"></i>
 
-        <!-- specular glints on the rim -->
-        <i class="glint g1" aria-hidden="true"></i>
-        <i class="glint g2" aria-hidden="true"></i>
-        <i class="glint g3" aria-hidden="true"></i>
-        <i class="glint g4" aria-hidden="true"></i>
-        <i class="glint g5" aria-hidden="true"></i>
-
         <!-- hero interior: DteZ mark + signature dot -->
         <div class="scene">
           <p class="cap-brand">DteZ</p>
@@ -64,6 +57,42 @@
         <button class="pill" id="pill" type="button"
                 aria-label="Connect with us — show contact options"
                 aria-expanded="false" aria-controls="panel"></button>
+
+        <!-- channel icons — appear under the capsule as scrolling begins
+             (anchored to the frame's bottom edge, counter-scaled by
+             island.js so they stay full touch size at every depth) -->
+        <div id="chanRow">
+          <div id="rowIn" role="group" aria-label="Connect on social channels">
+            <button class="chan-ico chan-ico--ig" type="button" data-app="Instagram"
+                    aria-pressed="false" aria-label="Connect on Instagram">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true">
+                <rect x="3.4" y="3.4" width="17.2" height="17.2" rx="5.4"/>
+                <circle cx="12" cy="12" r="4"/>
+                <circle cx="17.15" cy="6.85" r="1.15" fill="currentColor" stroke="none"/>
+              </svg>
+            </button>
+            <button class="chan-ico chan-ico--fb" type="button" data-app="Facebook"
+                    aria-pressed="false" aria-label="Connect on Facebook">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M13.4 21v-6.9h2.3l.4-2.7h-2.7V9.6c0-.8.2-1.3 1.3-1.3h1.5V5.9c-.3 0-1.2-.1-2.2-.1-2.2 0-3.7 1.3-3.7 3.8v1.8H8v2.7h2.3V21h3.1z"/>
+              </svg>
+            </button>
+            <button class="chan-ico chan-ico--wa" type="button" data-app="WhatsApp"
+                    aria-pressed="false" aria-label="Chat on WhatsApp">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M12 3a8.9 8.9 0 0 0-7.6 13.5L3 21l4.6-1.2A8.9 8.9 0 1 0 12 3zm0 1.9a7 7 0 1 1-3.6 13l-.4-.2-2.1.5.5-2-.3-.4A7 7 0 0 1 12 4.9zM9.6 8.2c-.2 0-.5.1-.7.3-.3.3-.9.9-.9 2.1 0 1.3.9 2.5 1 2.7.1.2 1.9 2.9 4.6 4 .6.3 1.1.4 1.5.5.6.2 1.2.2 1.6.1.5-.1 1.6-.6 1.8-1.3.2-.6.2-1.2.1-1.3 0-.1-.2-.2-.5-.3l-1.6-.7c-.2-.1-.4-.1-.6.1l-.6.8c-.1.2-.3.2-.5.1-.3-.1-1.1-.4-2-1.2-.7-.6-1.2-1.4-1.4-1.7-.1-.2 0-.3.1-.5l.4-.4c.1-.2.2-.3.2-.5v-.5l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.7z"/>
+              </svg>
+            </button>
+            <button class="chan-ico chan-ico--li" type="button" data-app="LinkedIn"
+                    aria-pressed="false" aria-label="Connect on LinkedIn">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <circle cx="5.4" cy="5.1" r="1.9"/>
+                <rect x="3.8" y="8.8" width="3.2" height="12.2"/>
+                <path d="M10.2 8.8h3.1v1.7c.5-.9 1.6-1.9 3.3-1.9 2.3 0 3.8 1.6 3.8 4.7V21h-3.1v-6.2c0-1.6-.6-2.5-1.8-2.5-1.3 0-2 .9-2 2.5V21h-3.3V8.8z"/>
+              </svg>
+            </button>
+          </div>
+        </div>
 
       </div><!-- /frame -->
 
