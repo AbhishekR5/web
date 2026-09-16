@@ -112,24 +112,6 @@ html.ready .pinner{animation:none}
   border:2px solid rgba(110,255,175,.4);filter:blur(9px);opacity:.55;
   transition:opacity .4s ease;
 }
-.capsule::after{ /* inner top sheen */
-  content:"";position:absolute;left:10%;right:10%;top:4%;
-  height:34%;border-radius:999px;
-  background:linear-gradient(180deg,rgba(190,255,225,.16),transparent 78%);
-  pointer-events:none;
-  transition:opacity .4s ease;
-}
-
-/* thin glow bars near the top & bottom inner edges */
-.edge-bar{position:absolute;left:14%;width:72%;pointer-events:none;border-radius:999px;z-index:1;transition:opacity .4s ease}
-.edge-bar--top{top:16%;
-  background:linear-gradient(90deg,transparent,rgba(48,209,88,.55) 22%,rgba(48,209,88,.55) 78%,transparent);
-  box-shadow:0 0 14px rgba(48,209,88,.35);height:5px}
-.edge-bar--bottom{bottom:15%;height:6px;
-  background:linear-gradient(90deg,transparent,rgba(48,209,88,.6) 20%,rgba(48,209,88,.6) 80%,transparent);
-  box-shadow:0 0 18px rgba(48,209,88,.4)}
-.edge-bar::after{content:"";position:absolute;left:22%;right:22%;top:50%;transform:translateY(-50%);
-  height:2px;border-radius:999px;background:#c6ffe0;filter:blur(.5px);opacity:.8}
 
 /* ---- hero interior (brand + dot) ---- */
 .scene{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;
@@ -162,14 +144,12 @@ html.ready .pinner{animation:none}
   border-radius:999px;
   background:
     radial-gradient(58% 150% at 50% 44%, rgba(48,209,88,.14), transparent 76%),
-    linear-gradient(180deg, rgba(255,255,255,.06) 0%, rgba(255,255,255,0) 34%),
     linear-gradient(180deg, rgba(15,38,24,.94) 0%, rgba(2,6,3,.98) 100%);
   border:calc(1px * var(--u)) solid rgba(125,255,185,.45);
   box-shadow:
     0 0 calc(30px * var(--u)) rgba(48,209,88,.45),
     0 calc(9px * var(--u)) calc(22px * var(--u)) rgba(0,0,0,.6),
-    inset 0 0 calc(14px * var(--u)) rgba(48,209,88,.14),
-    inset 0 calc(1px * var(--u)) 0 rgba(255,255,255,.18);
+    inset 0 0 calc(14px * var(--u)) rgba(48,209,88,.14);
   backdrop-filter:blur(14px);
   -webkit-backdrop-filter:blur(14px);
   opacity:0;visibility:hidden;pointer-events:none;
@@ -204,8 +184,7 @@ body.is-docked .pill{
     box-shadow:
       0 0 calc(44px * var(--u)) rgba(48,209,88,.62),
       0 calc(11px * var(--u)) calc(26px * var(--u)) rgba(0,0,0,.65),
-      inset 0 0 calc(16px * var(--u)) rgba(48,209,88,.2),
-      inset 0 calc(1px * var(--u)) 0 rgba(255,255,255,.22);
+      inset 0 0 calc(16px * var(--u)) rgba(48,209,88,.2);
   }
 }
 body.is-docked .pill:active{transform:translate(-50%,-50%) scale(.96)}
@@ -315,9 +294,7 @@ body.is-min .scene .island{opacity:0;transform:scale(.3);transition:opacity .26s
 
 /* the rim condenses into the pill */
 body.is-docked .capsule,
-body.is-docked .capsule::before,
-body.is-docked .capsule::after,
-body.is-docked .edge-bar{opacity:0;box-shadow:none}
+body.is-docked .capsule::before{opacity:0;box-shadow:none}
 
 /* hero copy + hints out of the way once docked/pinned */
 body.is-docked .hero-head{opacity:0 !important}
